@@ -72,6 +72,30 @@ const setBookmarkAttributes =  (src, eventListener, controlParentElement) => {
   controlParentElement.appendChild(controlElement);
 };
 
+async function fetchTranscript(videoId: string): Promise<string> {
+    const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
+    const html = await response.text();
+
+    // apparently this "extracts the serialized ytInitialPlayerResponse" which is jsoon
+    const match = html.match(/"captions":(\{.*?"playerCaptionsTracklistRenderer".*?\}),\s*"videoDetails"/s);
+    if(!match) return "";
+
+    const captions = JSON.parse(match[1]);
+    const captionTrack = captions?.playerCaptionsTracklistRenderer?.captionTracks?.[0];
+    if (!captionTrack?.baseUrl) return "";
+
+    const transcriptRes = await fetch(captionTrack.baseUrl + "&fmt=json3");
+    const data = await transcriptRes.json();
+
+    console.log("Returning data...");
+
+    return data.events
+        .filter((e: any) => e.segs) // keeps out metadata
+        .map((e: any) => e.segs.map((s: any) => s.utf8).join("")) // joins each caption into a string
+        .join(" "); // joins everything with a space between
+}
+
+
 document.addEventListener("DOMContentLoaded", async () => {
   const activeTab = await getActiveTabURL();
   const queryParameters = activeTab.url.split("?")[1];
@@ -84,6 +108,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const currentVideoBookmarks = data[currentVideo] ? JSON.parse(data[currentVideo]) : [];
 
       viewBookmarks(currentVideoBookmarks);
+      console.log(await fetchTranscript(currentVideo));
     });
   } else {
     const container = document.getElementsByClassName("container")[0];
@@ -91,4 +116,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     container.innerHTML = '<div class="title">This is not a youtube video page.</div>';
   }
 });
-
