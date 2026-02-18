@@ -14,6 +14,13 @@ interface BookmarkMessage {
   let currentVideo = "";
   let currentVideoBookmarks = [];
 
+  /**
+   * The following two functions are being kept because I think
+   * they will be useful in form for creating functions I may need
+   * but are not applicable to my program's case.
+   */
+
+  /* I don't think I'll need this.
   const fetchBookmarks = (): Promise<Bookmark[]> => {
     return new Promise<Bookmark[]>((resolve) => {
       chrome.storage.sync.get([currentVideo], (obj) => {
@@ -21,7 +28,9 @@ interface BookmarkMessage {
       });
     });
   };
+  */
 
+  /*
   const addNewBookmarkEventHandler = async () => {
     const currentTime = youtubePlayer.currentTime;
     const newBookmark = {
@@ -35,7 +44,10 @@ interface BookmarkMessage {
       [currentVideo]: JSON.stringify([...currentVideoBookmarks, newBookmark].sort((a, b) => a.time - b.time))
     });
   };
+  */
 
+  /**
+   * I could easily repurpose this to act as my video evaluation button.
   const newVideoLoaded = async () => {
     const bookmarkBtnExists = document.getElementsByClassName("bookmark-btn")[0];
 
@@ -55,7 +67,12 @@ interface BookmarkMessage {
       bookmarkBtn.addEventListener("click", addNewBookmarkEventHandler);
     }
   };
+  */
 
+  /**
+   * This acts in response to any sendMessage initiated.
+   * I will need to update this to respond based on how I want it to respond.
+   */
   chrome.runtime.onMessage.addListener((obj:BookmarkMessage, sender, response): boolean | Promise<any> => {
     const { type, value, videoId } = obj; // I need to define this data type and then I should make good progress
 
