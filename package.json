@@ -4,7 +4,9 @@
     "watch": "tsc --watch"
   },
   "dependencies": {
-    "chrome-types": "^0.1.415"
+    "@huggingface/transformers": "^3.8.1",
+    "chrome-types": "^0.1.415",
+    "youtube-transcript": "^1.2.1"
   },
   "devDependencies": {
     "typescript": "^5.9.3"
