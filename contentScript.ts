@@ -1,11 +1,24 @@
+import { process_transcript } from "./transcript-process";
+
 interface Bookmark {
   time: number;
   desc: string;
 }
 
+/*
 interface BookmarkMessage {
   type: "NEW" | "PLAY" | "DELETE";
   value?: number;
+  videoId?: string;
+}
+*/
+
+/**
+ * I included delete just in case you want a new analysis
+ * if the model updated
+ */
+interface analyzeVideoMessage {
+  type: "ANALYZE";
   videoId?: string;
 }
 
@@ -46,58 +59,39 @@ interface BookmarkMessage {
   };
   */
 
-  /**
-   * I could easily repurpose this to act as my video evaluation button.
-  const newVideoLoaded = async () => {
-    const bookmarkBtnExists = document.getElementsByClassName("bookmark-btn")[0];
+  const newVideoLoaded = async (video_id: string) => {
+    const analyzeBtnExists = document.getElementsByClassName("analyze-btn")[0];
 
-    currentVideoBookmarks = await fetchBookmarks();
+    if (!analyzeBtnExists) {
+      const analyzeBtn = document.createElement("img");
 
-    if (!bookmarkBtnExists) {
-      const bookmarkBtn = document.createElement("img");
-
-      bookmarkBtn.src = chrome.runtime.getURL("assets/bookmark.png");
-      bookmarkBtn.className = "ytp-button " + "bookmark-btn";
-      bookmarkBtn.title = "Click to bookmark current timestamp";
+      analyzeBtn.src = chrome.runtime.getURL("assets/bookmark.png");
+      analyzeBtn.className = "ytp-button " + "bookmark-btn";
+      analyzeBtn.title = "Click to bookmark current timestamp";
 
       youtubeLeftControls = document.getElementsByClassName("ytp-left-controls")[0];
       youtubePlayer = document.getElementsByClassName('video-stream')[0];
 
-      youtubeLeftControls.appendChild(bookmarkBtn);
-      bookmarkBtn.addEventListener("click", addNewBookmarkEventHandler);
+      youtubeLeftControls.appendChild(analyzeBtn);
+      
+      // sets up to run analysis when the button is clicked
+      analyzeBtn.addEventListener("click", () => process_transcript(video_id));
     }
   };
-  */
 
   /**
    * This acts in response to any sendMessage initiated.
    * I will need to update this to respond based on how I want it to respond.
    */
-  chrome.runtime.onMessage.addListener((obj:BookmarkMessage, sender, response): boolean | Promise<any> => {
-    const { type, value, videoId } = obj; // I need to define this data type and then I should make good progress
+  chrome.runtime.onMessage.addListener((obj:analyzeVideoMessage, sender, response): boolean | Promise<any> => {
+    const { type, videoId } = obj; // I need to define this data type and then I should make good progress
 
-    if (type === "NEW") {
+    if (type === "ANALYZE") {
       currentVideo = videoId;
-      newVideoLoaded();
-    } else if (type === "PLAY") {
-      youtubePlayer.currentTime = value;
-    } else if ( type === "DELETE") {
-      (async () => {
-        const fresh = await fetchBookmarks();
-        currentVideoBookmarks = fresh.filter((b) => b.time != value);
-        chrome.storage.sync.set({ [currentVideo]: JSON.stringify(currentVideoBookmarks) });
-        response(currentVideoBookmarks);
-      })();
-      return true;
+      newVideoLoaded(currentVideo);
     }
+
+    return true;
+
   });
-
-  newVideoLoaded();
 })();
-
-const getTime = t => {
-  var date = new Date(0);
-  date.setSeconds(t);
-
-  return date.toISOString().substr(11, 8);
-};

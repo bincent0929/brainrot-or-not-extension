@@ -22,7 +22,7 @@ const addNewBookmark = (bookmarks, bookmark) => {
   bookmarks.appendChild(newBookmarkElement);
 };
 
-const viewBookmarks = (currentBookmarks=[]) => {
+const viewAnalyses = (currentBookmarks=[]) => {
   const bookmarksElement = document.getElementById("bookmarks");
   bookmarksElement.innerHTML = "";
 
@@ -88,11 +88,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   // same logic.
 
   if (activeTab.url.includes("youtube.com/watch") && currentVideo) {
+    /**
     chrome.storage.sync.get([currentVideo], (data) => {
       const currentVideoBookmarks = data[currentVideo] ? JSON.parse(data[currentVideo]) : [];
 
-      viewBookmarks(currentVideoBookmarks);
+      viewAnalyses(currentVideoBookmarks);
+      
     });
+     */
   } else {
     const container = document.getElementsByClassName("container")[0];
 
