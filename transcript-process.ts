@@ -4,6 +4,14 @@ import { pipeline, AutoTokenizer, AutoModelForSequenceClassification } from '@hu
 
 import type { video_rating_and_info } from './types';
 
+/*
+// Apparently I can add this to download the WASM
+// code at the extension build time
+// instead of after
+import { env } from '@huggingface/transformers';
+env.backends.onnx.wasm.wasmPaths = chrome.runtime.getURL("");
+*/
+
 export async function process_transcript(video_id: string): Promise<video_rating_and_info> {
     /**
      * maybe I'll want to move this as a global variable

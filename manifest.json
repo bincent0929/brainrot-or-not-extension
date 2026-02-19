@@ -19,7 +19,9 @@
         "assets/bookmark.png",
         "assets/play.png",
         "assets/delete.png",
-        "assets/save.png"
+        "assets/save.png",
+        "ort-wasm-simd-threaded.jsep.wasm",
+        "ort-wasm-simd-threaded.jsep.mjs"
       ],
       "matches": ["https://*.youtube.com/*"]
     }

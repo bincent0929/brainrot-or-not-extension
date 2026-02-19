@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch"
+    "build": "vite build && vite build --config vite.config.bg.ts && vite build --config vite.config.popup.ts",
+    "watch": "vite build --watch"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.8.1",
@@ -9,6 +9,10 @@
     "youtube-transcript": "^1.2.1"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "@tailwindcss/vite": "^4.2.0",
+    "tailwindcss": "^4.2.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-static-copy": "^3.2.0"
   }
 }

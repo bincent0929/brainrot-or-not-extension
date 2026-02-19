@@ -17,15 +17,15 @@ interface BookmarkMessage {
  * I included delete just in case you want a new analysis
  * if the model updated
  */
-interface analyzeVideoMessage {
+type analyzeVideoMessage = {
   type: "ANALYZE";
   videoId?: string;
 }
 
 (() => {
   let youtubeLeftControls, youtubePlayer;
-  let currentVideo = "";
-  let currentVideoBookmarks = [];
+  //let currentVideo = "";
+  //let currentVideoBookmarks = [];
 
   /**
    * The following two functions are being kept because I think
@@ -87,8 +87,7 @@ interface analyzeVideoMessage {
     const { type, videoId } = obj; // I need to define this data type and then I should make good progress
 
     if (type === "ANALYZE") {
-      currentVideo = videoId;
-      newVideoLoaded(currentVideo);
+      newVideoLoaded(videoId);
     }
 
     return true;
