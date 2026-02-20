@@ -7,7 +7,10 @@ export type video_rating_and_info = {
     "score": Number,
 }
 
-export type analyzeVideoMessage = {
+export interface analyzeVideoMessage {
   type: "ANALYZE" | "NEW";
+}
+
+export interface analyzeVideoMessageVideoId extends analyzeVideoMessage {
   videoId?: string;
 }

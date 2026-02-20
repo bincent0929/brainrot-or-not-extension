@@ -1,6 +1,6 @@
 import { YoutubeTranscript } from 'youtube-transcript';
 
-import { pipeline, AutoTokenizer, AutoModelForSequenceClassification } from '@huggingface/transformers';
+import { pipeline } from '@huggingface/transformers';
 
 import type { video_rating_and_info } from './types';
 
@@ -19,7 +19,14 @@ export async function process_transcript(video_id: string): Promise<video_rating
      * all the video's data outside of processing its
      * transcript.
     */ 
-    let curr_video_analysis: video_rating_and_info;
+    let curr_video_analysis: video_rating_and_info = {
+        video_id: "",
+        video_title: "",
+        channel_name: "",
+        transcript: "",
+        model_used: "",
+        score: 0,
+    };
 
     curr_video_analysis.video_id = video_id;
 
@@ -27,12 +34,12 @@ export async function process_transcript(video_id: string): Promise<video_rating
      * Apparently <h1> is only used one time. So selecting for it and its children
      * should get me the title
      */
-    curr_video_analysis.video_title = document.querySelector('ytd-watch-metadata h1 yt-formatted-string')?.textContent.trim();
+    curr_video_analysis.video_title = document.querySelector('ytd-watch-metadata h1 yt-formatted-string')?.textContent?.trim() ?? "";
 
     // the youtube channel name is directly referred to as the channel name in the anchor's attributes
     // that surround it, so I have to select from the anchor with the elments that surround it
     // this might not
-    curr_video_analysis.channel_name = document.querySelector('ytd-channel-name a')?.textContent.trim();
+    curr_video_analysis.channel_name = document.querySelector('ytd-channel-name a')?.textContent?.trim() ?? "";
 
     /**
      * Because the transcript is returned in a time segmented form

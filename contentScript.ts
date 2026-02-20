@@ -18,13 +18,12 @@ interface BookmarkMessage {
  * if the model updated
  */
 
-type newVideoMessage = {
-  type: "NEW";
-  videoId?: string;
-}
+import { process_transcript } from "./transcript-process";
+import type { analyzeVideoMessageVideoId } from "./types";
 
 (() => {
-  let youtubeLeftControls, youtubePlayer;
+  let youtubeLeftControls;
+  let currentVideoId = "";
   //let currentVideo = "";
   //let currentVideoBookmarks = [];
 
@@ -60,6 +59,25 @@ type newVideoMessage = {
   };
   */
 
+  const getVideoIdFromUrl = (): string => {
+    return new URLSearchParams(window.location.search).get("v") ?? "";
+  };
+
+  const analyzeCurrentVideo = async (): Promise<void> => {
+    const videoId = currentVideoId || getVideoIdFromUrl();
+    if (!videoId) {
+      console.error("No YouTube video ID found to analyze.");
+      return;
+    }
+
+    try {
+      const analysis = await process_transcript(videoId);
+      console.log("Video analysis complete:", analysis);
+    } catch (error) {
+      console.error("Failed to analyze transcript:", error);
+    }
+  };
+
   const newVideoLoaded = async () => {
     const analyzeBtnExists = document.getElementsByClassName("analyze-btn")[0];
 
@@ -71,7 +89,6 @@ type newVideoMessage = {
       analyzeBtn.title = "Click to analyze the video's transcript!";
 
       youtubeLeftControls = document.getElementsByClassName("ytp-left-controls")[0];
-      youtubePlayer = document.getElementsByClassName('video-stream')[0];
 
       youtubeLeftControls.appendChild(analyzeBtn);
       
@@ -81,19 +98,24 @@ type newVideoMessage = {
        * created multiple times per video
        * */
       analyzeBtn.addEventListener("click", () => {
-        chrome.runtime.sendMessage({type: "ANALYZE"})
+        void analyzeCurrentVideo();
       });
     }
   };
+
+  // these try at multiple times to load the button
+  window.addEventListener("load", newVideoLoaded);
+  document.addEventListener("yt-navigate-finish", newVideoLoaded);
 
   /**
    * This acts in response to any sendMessage initiated.
    * I will need to update this to respond based on how I want it to respond.
    */
-  chrome.runtime.onMessage.addListener((obj:newVideoMessage, sender, response): boolean | Promise<any> => {
+  chrome.runtime.onMessage.addListener((obj:analyzeVideoMessageVideoId, sender, response): boolean | Promise<any> => {
 
     switch(obj.type) {
       case "NEW":
+        currentVideoId = obj.videoId ?? getVideoIdFromUrl();
         newVideoLoaded();
         break;
       default:
