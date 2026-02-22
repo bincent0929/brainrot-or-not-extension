@@ -65,7 +65,7 @@ def video_is_saved(video_id: str) -> bool:
         #"video_id": row[0],
         "video_title": row[1],
         "channel_name": row[2],
-        #"text": row[3],
+        "text": row[3],
         #"model_used": row[4],
         "score": row[5],
     })
