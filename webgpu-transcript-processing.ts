@@ -1,21 +1,12 @@
-/**
- * To run this make sure and install `pnpm`
- * Then run `pnpm install` to get the dependencies
- * Finally run `pnpm vite dev` and go to debug.html
- * and look at the console.log to see the model load
- * and run inference on the text.
- */
 import { ChatWebLLM } from "@langchain/community/chat_models/webllm";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { InitProgressReport } from '@mlc-ai/web-llm';
 
 import transcriptsAndPrompt from "./transcripts.json";
 
+import { fetchTranscript } from "youtube-transcript-plus";
+
 import type { videoEval } from "./types";
-
-const transcript = transcriptsAndPrompt.transcript2;
-
-const prePrompt = transcriptsAndPrompt.prePrompt;
 
 async function modelLoad() {
     const model = new ChatWebLLM({
@@ -33,6 +24,20 @@ async function modelLoad() {
     return model;
 }
 
+/**
+ * Apparently this should work while using it in the browser,
+ * but there's some CORS request issue going on here.
+ */
+async function getYoutubeTranscript() {
+    const transcript = await fetchTranscript('dQw4w9WgXcQ');
+    // or pass a full YouTube URL
+    console.log(transcript);
+}
+
+const prePrompt = transcriptsAndPrompt.prePrompt;
+// change this to pick a different transcript
+// look in the transcript.json to see which transcripts you can select from.
+const transcript = transcriptsAndPrompt.transcript3;
 async function processTranscript(): Promise<videoEval> {
     const model = await modelLoad();
 
@@ -67,6 +72,7 @@ async function processTranscript(): Promise<videoEval> {
 }
 
 async function main() {
-    await processTranscript()
+    //await getYoutubeTranscript();
+    await processTranscript();
 }
 void main();
