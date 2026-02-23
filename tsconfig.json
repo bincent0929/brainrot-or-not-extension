@@ -10,7 +10,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "bundler",
-    "types": ["chrome-types"]
+    "types": ["chrome-types"],
+    "resolveJsonModule": true
   },
   "include": ["*.ts"],
   "exclude": ["node_modules"]
