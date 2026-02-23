@@ -25,3 +25,8 @@ export interface analyzeVideoMessage {
 export interface analyzeVideoMessageVideoId extends analyzeVideoMessage {
   videoId?: string;
 }
+
+export type videoEval = {
+  "score": number;
+  "reason": string;
+}

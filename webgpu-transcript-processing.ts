@@ -11,6 +11,8 @@ import { InitProgressReport } from '@mlc-ai/web-llm';
 
 import transcriptsAndPrompt from "./transcripts.json";
 
+import type { videoEval } from "./types";
+
 const transcript = transcriptsAndPrompt.transcript2;
 
 const prePrompt = transcriptsAndPrompt.prePrompt;
@@ -31,7 +33,7 @@ async function modelLoad() {
     return model;
 }
 
-async function processTranscript(): Promise<void> {
+async function processTranscript(): Promise<videoEval> {
     const model = await modelLoad();
 
     // Call the model with a message and await the response.
@@ -49,8 +51,19 @@ async function processTranscript(): Promise<void> {
         throw Error("The inference crashed.")
     }
 
-    console.log(response.content);
+    /**
+     * This literaly grabs the string from the output
+     */
+    const contentStr = typeof response.content === "string"
+        ? response.content
+        : (response.content as { text: string }[])[0].text;
+
+    const modelResponse: videoEval = JSON.parse(contentStr);
+ 
+    console.log(modelResponse);
     console.log(`Inference time: ${inferenceMs}ms`);
+
+    return modelResponse;
 }
 
 async function main() {
