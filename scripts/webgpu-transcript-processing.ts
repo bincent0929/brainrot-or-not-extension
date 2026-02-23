@@ -2,8 +2,7 @@ import { ChatWebLLM } from "@langchain/community/chat_models/webllm";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { InitProgressReport } from '@mlc-ai/web-llm';
 
-import transcriptsAndPrompt from "./transcripts.json";
-
+import transcriptsAndPrompt from "../assets/transcripts.json";
 import { fetchTranscript } from "youtube-transcript-plus";
 
 import type { videoEval } from "./types";

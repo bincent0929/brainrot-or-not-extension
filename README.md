@@ -8,6 +8,8 @@ Install `pnpm`
 curl -fsSL https://get.pnpm.io/install.sh | sh -\n\n
 ```
 
+`cd` into `scripts/`, then run the below.
+
 Run `pnpm install` to get the dependent packages.
 
 Then run `pnpm vite dev` to start the web server.

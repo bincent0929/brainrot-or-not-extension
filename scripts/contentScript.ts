@@ -18,7 +18,7 @@ interface BookmarkMessage {
  * if the model updated
  */
 
-import { process_transcript } from "./transcript-process";
+import { process_transcript } from "../transcript-process";
 import type { analyzeVideoMessageVideoId } from "./types";
 
 (() => {
