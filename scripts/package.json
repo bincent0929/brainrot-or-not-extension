@@ -1,16 +1,11 @@
 {
-  "scripts": {
-    "build": "vite build && vite build --config vite.config.bg.ts && vite build --config vite.config.popup.ts",
-    "watch": "vite build --watch"
-  },
   "dependencies": {
     "@huggingface/transformers": "^3.8.1",
     "@langchain/community": "^1.1.17",
     "@langchain/core": "^1.1.27",
     "@mlc-ai/web-llm": "^0.2.81",
     "chrome-types": "^0.1.415",
-    "langchain": "^1.2.25",
-    "youtube-transcript-plus": "^1.2.0"
+    "langchain": "^1.2.25"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.0",
