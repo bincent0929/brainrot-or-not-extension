@@ -1,3 +1,11 @@
+/** About
+ * This script has access to the extension's DOM
+ * I will use this to have the user initiate the analysis
+ * of the transcript.
+ * And I will use this to present the analysis to the user when
+ * it's finished being processed.
+ */
+
 import { getActiveTabURL } from "./utils.js";
 
 /**

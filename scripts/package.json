@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@huggingface/transformers": "^3.8.1",
     "@langchain/community": "^1.1.17",
     "@langchain/core": "^1.1.27",
     "@mlc-ai/web-llm": "^0.2.81",

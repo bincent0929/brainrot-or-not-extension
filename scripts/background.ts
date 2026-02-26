@@ -1,3 +1,11 @@
+/**
+ * This is the extension service worker.
+ * I think I'm going to have this run the inference
+ * in the background. It is supposed to run up to 5 minutes
+ * by default. Which should be plently of time for inference using
+ * the small model that I have being loaded.
+ */
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (tab.url && tab.url.includes("youtube.com/watch") && changeInfo.status === "complete") {
     const queryParameters = tab.url.split("?")[1];

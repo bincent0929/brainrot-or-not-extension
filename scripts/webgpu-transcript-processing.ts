@@ -3,7 +3,6 @@ import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { InitProgressReport } from '@mlc-ai/web-llm';
 
 import transcriptsAndPrompt from "../assets/transcripts.json";
-import { fetchTranscript } from "youtube-transcript-plus";
 
 import type { videoEval } from "./types";
 
@@ -21,16 +20,6 @@ async function modelLoad() {
     });
 
     return model;
-}
-
-/**
- * Apparently this should work while using it in the browser,
- * but there's some CORS request issue going on here.
- */
-async function getYoutubeTranscript() {
-    const transcript = await fetchTranscript('dQw4w9WgXcQ');
-    // or pass a full YouTube URL
-    console.log(transcript);
 }
 
 const prePrompt = transcriptsAndPrompt.prePrompt;

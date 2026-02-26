@@ -13,6 +13,6 @@
     "types": ["chrome-types"],
     "resolveJsonModule": true
   },
-  "include": ["*.ts", "scripts/contentScript.ts", "scripts/background.ts", "scripts/popup.ts", "scripts/types.ts", "scripts/utils.ts", "scripts/webgpu-transcript-processing.ts"],
+  "include": ["*.ts",],
   "exclude": ["node_modules"]
 }

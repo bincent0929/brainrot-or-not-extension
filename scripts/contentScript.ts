@@ -1,3 +1,9 @@
+/**
+ * This script is given access to the DOM of the page.
+ * This will be used to scrape the transcript, channel, and video title
+ * All will be sent through inference and returned.
+ */
+
 import type { analyzeVideoMessageVideoId } from "./types";
 
 /**
