@@ -1,8 +1,8 @@
 {
-  "name": "My YT Bookmarks",
+  "name": "Brainrot Or Not",
   "version": "0.1.0",
-  "description": "Saving timestamps in YT videos",
-  "permissions": ["storage", "tabs"],
+  "description": "Processes the YouTube video's transcript and let's you know if it's brainrot or not",
+  "permissions": ["tabs"],
   "host_permissions": ["https://*.youtube.com/*"],
   "background": {
     "service_worker": "background.js"
@@ -19,9 +19,7 @@
         "assets/bookmark.png",
         "assets/play.png",
         "assets/delete.png",
-        "assets/save.png",
-        "ort-wasm-simd-threaded.jsep.wasm",
-        "ort-wasm-simd-threaded.jsep.mjs"
+        "assets/save.png"
       ],
       "matches": ["https://*.youtube.com/*"]
     }
@@ -32,7 +30,7 @@
       "24": "assets/ext-icon.png",
       "32": "assets/ext-icon.png"
     },
-    "default_title": "My YT Bookmarks",
+    "default_title": "Brainrot Or Not",
     "default_popup": "popup.html"
   },
   "manifest_version": 3

@@ -1,63 +1,24 @@
-/*
-interface Bookmark {
-  time: number;
-  desc: string;
-}
-*/
-
-/*
-interface BookmarkMessage {
-  type: "NEW" | "PLAY" | "DELETE";
-  value?: number;
-  videoId?: string;
-}
-*/
+import type { analyzeVideoMessageVideoId } from "./types";
 
 /**
- * I included delete just in case you want a new analysis
- * if the model updated
+ * I want this to grab the videoId of the YouTube video,
+ * the title, and the name of the channel
  */
 
-import { process_transcript } from "../transcript-process";
-import type { analyzeVideoMessageVideoId } from "./types";
+function grabYouTubeContent() {
+  // Grabs me the YouTube title
+  const titleEl = document.querySelector('yt-formatted-string.ytd-watch-metadata');
+  const title = titleEl?.textContent?.trim();
+  // Grabs me the YouTube channel name
+  const channelEl = document.querySelector('a.yt-simple-endpoint[href^="/@"]');
+  const channelName = channelEl?.textContent?.trim(); // "CaseyNeistat"
+
+
+}
 
 (() => {
   let youtubeLeftControls;
   let currentVideoId = "";
-  //let currentVideo = "";
-  //let currentVideoBookmarks = [];
-
-  /**
-   * The following two functions are being kept because I think
-   * they will be useful in form for creating functions I may need
-   * but are not applicable to my program's case.
-   */
-
-  /* I don't think I'll need this.
-  const fetchBookmarks = (): Promise<Bookmark[]> => {
-    return new Promise<Bookmark[]>((resolve) => {
-      chrome.storage.sync.get([currentVideo], (obj) => {
-        resolve(obj[currentVideo] ? JSON.parse(obj[currentVideo]) : []);
-      });
-    });
-  };
-  */
-
-  /*
-  const addNewBookmarkEventHandler = async () => {
-    const currentTime = youtubePlayer.currentTime;
-    const newBookmark = {
-      time: currentTime,
-      desc: "Bookmark at " + getTime(currentTime),
-    };
-
-    currentVideoBookmarks = await fetchBookmarks();
-
-    chrome.storage.sync.set({
-      [currentVideo]: JSON.stringify([...currentVideoBookmarks, newBookmark].sort((a, b) => a.time - b.time))
-    });
-  };
-  */
 
   const getVideoIdFromUrl = (): string => {
     return new URLSearchParams(window.location.search).get("v") ?? "";

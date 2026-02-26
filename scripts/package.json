@@ -10,8 +10,7 @@
     "@mlc-ai/web-llm": "^0.2.81",
     "chrome-types": "^0.1.415",
     "langchain": "^1.2.25",
-    "youtube-transcript-plus": "^1.2.0",
-    "youtube-transcript-ts": "^1.3.0"
+    "youtube-transcript-plus": "^1.2.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.0",
