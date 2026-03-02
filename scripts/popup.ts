@@ -32,11 +32,6 @@ const newVideoLoaded = async () => {
 
     analyzeContainer.appendChild(analyzeBtn);
     
-    /**
-     * I want to move this to the background.ts file so that it
-     * run as a background worker instead of in the browser where it can be
-     * created multiple times per video
-     * */
     analyzeBtn.addEventListener("click", async () => {
       const [tab] = await chrome.tabs.query({
         active: true,
@@ -52,26 +47,5 @@ const newVideoLoaded = async () => {
  * background.ts seems to do.
  */
 document.addEventListener("DOMContentLoaded", async () => {
-  // same logic...
-  const activeTab = await getActiveTabURL();
-  const queryParameters = activeTab.url.split("?")[1];
-  const urlParameters = new URLSearchParams(queryParameters);
-
-  const currentVideo = urlParameters.get("v");
-  // same logic.
-
-  if (activeTab.url.includes("youtube.com/watch") && currentVideo) {
-    /**
-    chrome.storage.sync.get([currentVideo], (data) => {
-      const currentVideoBookmarks = data[currentVideo] ? JSON.parse(data[currentVideo]) : [];
-
-      viewAnalyses(currentVideoBookmarks);
-      
-    });
-     */
-  } else {
-    const container = document.getElementsByClassName("container")[0];
-
-    container.innerHTML = '<div class="title">This is not a youtube video page.</div>';
-  }
+  await newVideoLoaded();
 });
