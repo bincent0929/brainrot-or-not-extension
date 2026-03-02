@@ -4,6 +4,10 @@
 
 ![[extension-flow-diagram.excalidraw]]
 
+Go to excalidraw.com or install the excalidraw extension on VScode to view the diagram.
+
+!!!I need to go to https://crxjs.dev/guide/installation/from-scratch and figure out how to set up building the extension!!!
+
 ## Debugging Inference
 
 Install `pnpm`
