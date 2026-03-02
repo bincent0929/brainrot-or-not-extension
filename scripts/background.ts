@@ -12,40 +12,29 @@
  * (or save it to the browser's storage. I think the contentScript might need to do that).
  */
 
-/*
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (tab.url && tab.url.includes("youtube.com/watch") && changeInfo.status === "complete") {
-    const queryParameters = tab.url.split("?")[1];
-    const urlParameters = new URLSearchParams(queryParameters);
+import type { youtubeDataMessage, videoEvalMessage } from "./types";
 
-    /**
-     * this gets sent to the listener constructed below
-     * and to the listener in the contentScript
-    
-    chrome.tabs.sendMessage(tabId, {
-      type: "NEW",
-      videoId: urlParameters.get("v"),
-    });
-  }
-});
-*/
-
-import type { videoEval, youtubeDataAnalysisMessage } from "./types";
+import { processTranscript } from "./webgpu-transcript-processing";
 
 // need to import the webpu processing
 
 (() => {
-  chrome.runtime.onMessage.addListener((obj:videoEval, sender, response): boolean | Promise<any> => {
+  chrome.runtime.onMessage.addListener((obj: youtubeDataMessage, _sender, _response): boolean => {
 
     switch(obj.type) {
       case "ANALYZE":
-        // run the processing here and save it to the message
-        const message: videoEval = {
-          type: "ANALYZE_SAVED",
-          score: 0.0,
-          reason: ""
-        };
-        chrome.runtime.sendMessage(message);
+        (async () => {
+          /**
+           * Right now this just sends the message.
+           * I want to change this to save the result
+           * to storage.
+           */
+          const message: videoEvalMessage = {
+            type: "ANALYZE_SAVED",
+            videoEval: await processTranscript(obj.youtubeData),
+          };
+          chrome.runtime.sendMessage(message);
+        })();
         break;
       default:
         break;
