@@ -9,7 +9,7 @@
  * So I'll have to add something in here to checks for whether the elements or loaded or not and returns
  * the error or something. At least for now.
  */
-function scrapeTranscript(): string {
+export function scrapeTranscript(): string {
   // Grab all transcript segment nodes
   /**
    * With the current tsconfig this gives an error
