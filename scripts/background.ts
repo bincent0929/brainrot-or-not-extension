@@ -30,22 +30,29 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 */
 
-import type { videoEval, youtubeDataAnalysisMessage } from "./types";
+import type { videoEval, youtubeDataMessage, videoEvalMessage } from "./types";
+
+import { processTranscript } from "./webgpu-transcript-processing";
 
 // need to import the webpu processing
 
 (() => {
-  chrome.runtime.onMessage.addListener((obj:videoEval, sender, response): boolean | Promise<any> => {
+  chrome.runtime.onMessage.addListener((obj: youtubeDataMessage, _sender, _response): boolean => {
 
     switch(obj.type) {
       case "ANALYZE":
-        // run the processing here and save it to the message
-        const message: videoEval = {
-          type: "ANALYZE_SAVED",
-          score: 0.0,
-          reason: ""
-        };
-        chrome.runtime.sendMessage(message);
+        (async () => {
+          /**
+           * Right now this just sends the message.
+           * I want to change this to save the result
+           * to storage.
+           */
+          const message: videoEvalMessage = {
+            type: "ANALYZE_SAVED",
+            videoEval: await processTranscript(obj.youtubeData),
+          };
+          chrome.runtime.sendMessage(message);
+        })();
         break;
       default:
         break;
