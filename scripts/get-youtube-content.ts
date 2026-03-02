@@ -1,13 +1,6 @@
 /**
- * THIS WORKS PERFECTLY!!!
- * Well, not really perfectly, but it actually gets the transcript
  * 
- * There is a caveat to this parser. This does need access to the user's DOM
- * AND it does need the user to press the "Show Transcript" button on the page
- * because that's what loads all of the transcript into the DOM.
- * 
- * So I'll have to add something in here to checks for whether the elements or loaded or not and returns
- * the error or something. At least for now.
+ * @returns the text transcript of the page without timestamps as a full unbroken paragraph
  */
 export function scrapeTranscript(): string {
   // Grab all transcript segment nodes

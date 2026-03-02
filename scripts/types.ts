@@ -1,5 +1,5 @@
 export interface videoAnalaysisMessageType {
-  type: "GRAB_VIDEO_INFO" | "ANALYZE" | "ANALYSIS_FINISHED";
+  type: "GRAB_VIDEO_INFO" | "ANALYZE" | "ANALYZE_SAVED";
 }
 
 export interface youtubeDataAnalysisMessage extends videoAnalaysisMessageType {

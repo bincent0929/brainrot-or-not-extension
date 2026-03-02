@@ -29,3 +29,28 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 */
+
+import type { videoEval, youtubeDataAnalysisMessage } from "./types";
+
+// need to import the webpu processing
+
+(() => {
+  chrome.runtime.onMessage.addListener((obj:videoEval, sender, response): boolean | Promise<any> => {
+
+    switch(obj.type) {
+      case "ANALYZE":
+        // run the processing here and save it to the message
+        const message: videoEval = {
+          type: "ANALYZE_SAVED",
+          score: 0.0,
+          reason: ""
+        };
+        chrome.runtime.sendMessage(message);
+        break;
+      default:
+        break;
+    }
+
+    return true;
+  });
+})();
