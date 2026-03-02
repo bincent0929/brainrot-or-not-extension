@@ -1,13 +1,6 @@
 /**
- * THIS WORKS PERFECTLY!!!
- * Well, not really perfectly, but it actually gets the transcript
  * 
- * There is a caveat to this parser. This does need access to the user's DOM
- * AND it does need the user to press the "Show Transcript" button on the page
- * because that's what loads all of the transcript into the DOM.
- * 
- * So I'll have to add something in here to checks for whether the elements or loaded or not and returns
- * the error or something. At least for now.
+ * @returns the text transcript of the page without timestamps as a full unbroken paragraph
  */
 export function scrapeTranscript(): string {
   // Grab all transcript segment nodes
@@ -34,26 +27,33 @@ export function scrapeTranscript(): string {
       // Skip empty entries
       if (!text) return null;
 
-      // 1) Transcript only (no timestamps)
+      // Transcript only (no timestamps)
       return text;
 
-      // 2) Transcript with timestamps
+      // Transcript with timestamps
       // return ts ? `${ts} ${text}` : text;
     })
     .filter(Boolean);
 
   const transcript = lines.join(" ");
 
-  // Output / copy helpers
-  console.log("Transcript lines:", lines.length);
-  console.log(transcript);
+  // For debug
+  //console.log("Transcript lines:", lines.length);
+  //console.log(transcript);
 
-  // Try to copy to clipboard (may require user gesture depending on context)
-  navigator.clipboard?.writeText(transcript).then(
-    () => console.log("Copied transcript to clipboard ✅"),
-    () => console.log("Could not copy automatically; transcript is in console.")
-  );
-
-  // Also return it for easy pasting in DevTools
   return transcript;
+}
+
+export function grab_channel(): string {
+  const channelEl = document.querySelector('yt-formatted-string.ytd-channel-name');
+  return channelEl?.textContent?.trim();
+}
+
+export function grab_video_title(): string {
+  const titleEl = document.querySelector('yt-formatted-string.ytd-watch-metadata');
+  return titleEl?.textContent?.trim();
+}
+
+export function grab_vId(): string {
+  return new URLSearchParams(window.location.search).get("v") ?? "";
 }

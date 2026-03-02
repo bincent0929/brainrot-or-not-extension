@@ -2,6 +2,8 @@
 
 !!! The webgpu file runs an LLM in your browser. It will be resource intensive !!!
 
+![[extension-flow-diagram.excalidraw]]
+
 ## Debugging Inference
 
 Install `pnpm`
