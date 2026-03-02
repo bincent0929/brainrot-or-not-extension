@@ -11,6 +11,10 @@ export function scrapeTranscript(): string {
   const segments = Array.from(document.querySelectorAll("ytd-transcript-segment-renderer"));
 
   if (!segments.length) {
+    /**
+     * This should eventually send something to update
+     * the extension's UI. NOT the console.
+     */
     console.warn("No transcript segments found. Go into the video's description and click the \"Show Transcript\" button.");
     return;
   }

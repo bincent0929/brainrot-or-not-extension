@@ -11,8 +11,7 @@
  * to update the pop up UI with the information about the video.
  */
 
-import type { videoAnalaysisMessageType } from "./types.js";
-import { getActiveTabURL } from "./utils.js";
+import type { messageTypes } from "./types.js";
 
 /**
  * I want this to add a listner on the button in the popup that sends a
@@ -37,7 +36,7 @@ const newVideoLoaded = async () => {
         active: true,
         currentWindow: true
       });
-      chrome.tabs.sendMessage(tab.id!, {type: "GRAB_VIDEO_INFO"} satisfies videoAnalaysisMessageType);
+      chrome.tabs.sendMessage(tab.id!, {type: "GRAB_VIDEO_INFO"} satisfies messageTypes);
     });
   }
 };
