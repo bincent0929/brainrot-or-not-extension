@@ -34,26 +34,29 @@ export function scrapeTranscript(): string {
       // Skip empty entries
       if (!text) return null;
 
-      // 1) Transcript only (no timestamps)
+      // Transcript only (no timestamps)
       return text;
 
-      // 2) Transcript with timestamps
+      // Transcript with timestamps
       // return ts ? `${ts} ${text}` : text;
     })
     .filter(Boolean);
 
   const transcript = lines.join(" ");
 
-  // Output / copy helpers
-  console.log("Transcript lines:", lines.length);
-  console.log(transcript);
+  // For debug
+  //console.log("Transcript lines:", lines.length);
+  //console.log(transcript);
 
-  // Try to copy to clipboard (may require user gesture depending on context)
-  navigator.clipboard?.writeText(transcript).then(
-    () => console.log("Copied transcript to clipboard ✅"),
-    () => console.log("Could not copy automatically; transcript is in console.")
-  );
-
-  // Also return it for easy pasting in DevTools
   return transcript;
+}
+
+export function grab_channel(): string {
+  const channelEl = document.querySelector('a.yt-simple-endpoint[href^="/@"]');
+  return channelEl?.textContent?.trim(); // "CaseyNeistat"
+}
+
+export function grab_video_title(): string {
+  const titleEl = document.querySelector('yt-formatted-string.ytd-watch-metadata');
+  return titleEl?.textContent?.trim();
 }

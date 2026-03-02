@@ -6,81 +6,41 @@
  * it's finished being processed.
  */
 
+/**
+ * This will fetch from the browser's storage once the PROCESSED signal is broadcast
+ * to update the pop up UI with the information about the video.
+ */
+
 import { getActiveTabURL } from "./utils.js";
 
 /**
-const addNewBookmark = (bookmarks, bookmark) => {
-  const bookmarkTitleElement = document.createElement("div");
-  const controlsElement = document.createElement("div");
-  const newBookmarkElement = document.createElement("div");
-
-  bookmarkTitleElement.textContent = bookmark.desc;
-  bookmarkTitleElement.className = "bookmark-title";
-  controlsElement.className = "bookmark-controls";
-
-  setBookmarkAttributes("play", onPlay, controlsElement);
-  setBookmarkAttributes("delete", onDelete, controlsElement);
-
-  newBookmarkElement.id = "bookmark-" + bookmark.time;
-  newBookmarkElement.className = "bookmark";
-  newBookmarkElement.setAttribute("timestamp", bookmark.time);
-
-  newBookmarkElement.appendChild(bookmarkTitleElement);
-  newBookmarkElement.appendChild(controlsElement);
-  bookmarks.appendChild(newBookmarkElement);
-};
-
-const viewAnalyses = (currentBookmarks=[]) => {
-  const bookmarksElement = document.getElementById("bookmarks");
-  bookmarksElement.innerHTML = "";
-
-  if (currentBookmarks.length > 0) {
-    for (let i = 0; i < currentBookmarks.length; i++) {
-      const bookmark = currentBookmarks[i];
-      addNewBookmark(bookmarksElement, bookmark);
-    }
-  } else {
-    bookmarksElement.innerHTML = '<i class="row">No bookmarks to show</i>';
-  }
-
-  return;
-};
-
-const onPlay = async e => {
-  const bookmarkTime = e.target.parentNode.parentNode.getAttribute("timestamp");
-  const activeTab = await getActiveTabURL();
-
-  chrome.tabs.sendMessage(activeTab.id, {
-    type: "PLAY",
-    value: bookmarkTime,
-  });
-};
-
-const onDelete = async e => {
-  const activeTab = await getActiveTabURL();
-  const bookmarkTime = e.target.parentNode.parentNode.getAttribute("timestamp");
-  const bookmarkElementToDelete = document.getElementById(
-    "bookmark-" + bookmarkTime
-  );
-
-  bookmarkElementToDelete.parentNode.removeChild(bookmarkElementToDelete);
-
-  const response = await chrome.tabs.sendMessage(activeTab.id, {
-    type: "DELETE",
-    value: bookmarkTime,
-  });
-  viewBookmarks(response);
-};
-
-const setBookmarkAttributes =  (src, eventListener, controlParentElement) => {
-  const controlElement = document.createElement("img");
-
-  controlElement.src = "assets/" + src + ".png";
-  controlElement.title = src;
-  controlElement.addEventListener("click", eventListener);
-  controlParentElement.appendChild(controlElement);
-};
+ * I want this to add a listner on the button in the popup that sends a
+ * message to the page content worker to scrape the page for the channel info
  */
+const newVideoLoaded = async () => {
+  const analyzeBtnExists = document.getElementsByClassName("analyze-btn")[0];
+
+  if (!analyzeBtnExists) {
+    const analyzeBtn = document.createElement("img");
+
+    analyzeBtn.src = chrome.runtime.getURL("assets/bookmark.png");
+    analyzeBtn.className = "ytp-button " + "analyze-btn";
+    analyzeBtn.title = "Click to analyze the video's transcript!";
+
+    youtubeLeftControls = document.getElementsByClassName("ytp-left-controls")[0];
+
+    youtubeLeftControls.appendChild(analyzeBtn);
+    
+    /**
+     * I want to move this to the background.ts file so that it
+     * run as a background worker instead of in the browser where it can be
+     * created multiple times per video
+     * */
+    analyzeBtn.addEventListener("click", () => {
+      void analyzeCurrentVideo();
+    });
+  }
+};
 
 /**
  * I'm kind of confused why this seems to perform the some of the same sort of logic that
