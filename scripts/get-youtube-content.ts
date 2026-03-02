@@ -52,8 +52,8 @@ export function scrapeTranscript(): string {
 }
 
 export function grab_channel(): string {
-  const channelEl = document.querySelector('a.yt-simple-endpoint[href^="/@"]');
-  return channelEl?.textContent?.trim(); // "CaseyNeistat"
+  const channelEl = document.querySelector('yt-formatted-string.ytd-channel-name');
+  return channelEl?.textContent?.trim();
 }
 
 export function grab_video_title(): string {
