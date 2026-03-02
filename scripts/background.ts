@@ -12,6 +12,7 @@
  * (or save it to the browser's storage. I think the contentScript might need to do that).
  */
 
+/*
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (tab.url && tab.url.includes("youtube.com/watch") && changeInfo.status === "complete") {
     const queryParameters = tab.url.split("?")[1];
@@ -20,10 +21,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     /**
      * this gets sent to the listener constructed below
      * and to the listener in the contentScript
-     */
+    
     chrome.tabs.sendMessage(tabId, {
       type: "NEW",
       videoId: urlParameters.get("v"),
     });
   }
 });
+*/

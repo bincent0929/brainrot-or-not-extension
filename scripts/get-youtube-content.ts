@@ -60,3 +60,7 @@ export function grab_video_title(): string {
   const titleEl = document.querySelector('yt-formatted-string.ytd-watch-metadata');
   return titleEl?.textContent?.trim();
 }
+
+export function grab_vId(): string {
+  return new URLSearchParams(window.location.search).get("v") ?? "";
+}
