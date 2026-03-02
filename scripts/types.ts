@@ -18,12 +18,8 @@ export interface video_rating_and_info extends video_rating {
   "channel_name": string,
 }
 
-export interface analyzeVideoMessage {
-  type: "ANALYZE" | "NEW";
-}
-
-export interface analyzeVideoMessageVideoId extends analyzeVideoMessage {
-  videoId?: string;
+export interface videoAnalaysisMessageType {
+  type: "GRAB_VIDEO_INFO" | "ANALYZE" | "ANALYSIS_FINISHED";
 }
 
 export type videoEval = {

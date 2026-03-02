@@ -6,17 +6,14 @@
 
 import type { analyzeVideoMessageVideoId } from "./types";
 
-import { scrapeTranscript, grab_channel, grab_video_title } from "./get-youtube-content";
+import { scrapeTranscript, grab_channel, grab_video_title, grab_vId } from "./get-youtube-content";
 
 (() => {
   let currentVideoId = "";
   const transcript = scrapeTranscript();
   const channel_name = grab_channel();
   const video_title = grab_video_title();
-
-  const getVideoIdFromUrl = (): string => {
-    return new URLSearchParams(window.location.search).get("v") ?? "";
-  };
+  const vidId = grab_vId();
 
   const analyzeCurrentVideo = async (): Promise<void> => {
     const videoId = currentVideoId || getVideoIdFromUrl();

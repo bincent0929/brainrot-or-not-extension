@@ -11,6 +11,7 @@
  * to update the pop up UI with the information about the video.
  */
 
+import type { videoAnalaysisMessageType } from "./types.js";
 import { getActiveTabURL } from "./utils.js";
 
 /**
@@ -24,20 +25,24 @@ const newVideoLoaded = async () => {
     const analyzeBtn = document.createElement("img");
 
     analyzeBtn.src = chrome.runtime.getURL("assets/bookmark.png");
-    analyzeBtn.className = "ytp-button " + "analyze-btn";
+    analyzeBtn.id = "analyze-btn";
     analyzeBtn.title = "Click to analyze the video's transcript!";
 
-    youtubeLeftControls = document.getElementsByClassName("ytp-left-controls")[0];
+    const analyzeContainer = document.getElementById("analyze-container");
 
-    youtubeLeftControls.appendChild(analyzeBtn);
+    analyzeContainer.appendChild(analyzeBtn);
     
     /**
      * I want to move this to the background.ts file so that it
      * run as a background worker instead of in the browser where it can be
      * created multiple times per video
      * */
-    analyzeBtn.addEventListener("click", () => {
-      void analyzeCurrentVideo();
+    analyzeBtn.addEventListener("click", async () => {
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true
+      });
+      chrome.tabs.sendMessage(tab.id!, {type: "GRAB_VIDEO_INFO"} satisfies videoAnalaysisMessageType);
     });
   }
 };

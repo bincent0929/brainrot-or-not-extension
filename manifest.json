@@ -2,6 +2,7 @@
   "name": "Brainrot Or Not",
   "version": "0.1.0",
   "description": "Processes the YouTube video's transcript and let's you know if it's brainrot or not",
+  "permissions": ["tabs"],
   "host_permissions": ["https://*.youtube.com/*"],
   "background": {
     "service_worker": "background.js"
