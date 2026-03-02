@@ -9,12 +9,16 @@
  * So I'll have to add something in here to checks for whether the elements or loaded or not and returns
  * the error or something. At least for now.
  */
-(() => {
+function scrapeTranscript(): string {
   // Grab all transcript segment nodes
+  /**
+   * With the current tsconfig this gives an error
+   * it can be ignored. The compiled output works.
+   */
   const segments = Array.from(document.querySelectorAll("ytd-transcript-segment-renderer"));
 
   if (!segments.length) {
-    console.warn("No transcript segments found. Make sure the transcript panel is open and loaded.");
+    console.warn("No transcript segments found. Go into the video's description and click the \"Show Transcript\" button.");
     return;
   }
 
@@ -29,8 +33,6 @@
 
       // Skip empty entries
       if (!text) return null;
-
-      // Choose ONE of these return formats:
 
       // 1) Transcript only (no timestamps)
       return text;
@@ -54,4 +56,4 @@
 
   // Also return it for easy pasting in DevTools
   return transcript;
-})();
+}
