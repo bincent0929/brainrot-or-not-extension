@@ -4,16 +4,12 @@
  * All will be sent through inference and returned.
  */
 
-import type { analyzeVideoMessageVideoId } from "./types";
+import type { videoAnalaysisMessageType } from "./types";
 
 import { scrapeTranscript, grab_channel, grab_video_title, grab_vId } from "./get-youtube-content";
 
 (() => {
   let currentVideoId = "";
-  const transcript = scrapeTranscript();
-  const channel_name = grab_channel();
-  const video_title = grab_video_title();
-  const vidId = grab_vId();
 
   const analyzeCurrentVideo = async (): Promise<void> => {
     const videoId = currentVideoId || getVideoIdFromUrl();
@@ -39,12 +35,19 @@ import { scrapeTranscript, grab_channel, grab_video_title, grab_vId } from "./ge
    * This acts in response to any sendMessage initiated.
    * I will need to update this to respond based on how I want it to respond.
    */
-  chrome.runtime.onMessage.addListener((obj:analyzeVideoMessageVideoId, sender, response): boolean | Promise<any> => {
+  chrome.runtime.onMessage.addListener((obj:videoAnalaysisMessageType, sender, response): boolean | Promise<any> => {
+    let 
+      transcript: string, 
+      channel_name: string, 
+      video_title: string, 
+      vidId: string;
 
     switch(obj.type) {
-      case "NEW":
-        currentVideoId = obj.videoId ?? getVideoIdFromUrl();
-        newVideoLoaded();
+      case "GRAB_VIDEO_INFO":
+        transcript = scrapeTranscript();
+        channel_name = grab_channel();
+        video_title = grab_video_title();
+        vidId = grab_vId();
         break;
       default:
         break;
