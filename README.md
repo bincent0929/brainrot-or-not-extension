@@ -4,7 +4,7 @@
 > The working parts of the program is just scripts right now. The two scripts you'll want to review are `debug-webgpu-transcript-processing.ts` and `get-youtube-content.ts`. The extension itself isn't functional yet.
 > I need to go to https://crxjs.dev/guide/installation/from-scratch and figure out how to set up building the extension.
 
-> [!INFO]
+> [!NOTE]
 > The webgpu file runs an LLM in your browser. It will be resource intensive.
 
 ![](extension-flow-diagram.svg)
