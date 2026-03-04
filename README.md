@@ -1,14 +1,15 @@
-!!! The main working file right now is `webgpu-transcript-processing.ts`. The extension isn't functional !!!
 
-!!! The webgpu file runs an LLM in your browser. It will be resource intensive !!!
 
-![[extension-flow-diagram.excalidraw]]
+> [!IMPORTANT]
+> The working parts of the program is just scripts right now. The two scripts you'll want to review are `debug-webgpu-transcript-processing.ts` and `get-youtube-content.ts`. The extension itself isn't functional yet.
+> I need to go to https://crxjs.dev/guide/installation/from-scratch and figure out how to set up building the extension.
 
-Go to excalidraw.com or install the excalidraw extension on VScode to view the diagram.
+> [!INFO]
+> The webgpu file runs an LLM in your browser. It will be resource intensive.
 
-!!!I need to go to https://crxjs.dev/guide/installation/from-scratch and figure out how to set up building the extension!!!
+![](extension-flow-diagram.svg)
 
-## Debugging Inference
+## Before debugging any of the scripts
 
 Install `pnpm`
 
@@ -20,11 +21,26 @@ curl -fsSL https://get.pnpm.io/install.sh | sh -\n\n
 
 Run `pnpm install` to get the dependent packages.
 
-Then run `pnpm vite dev` to start the web server.
+### Debugging Inference
+
+`cd` into `scripts/`
+
+Run `pnpm vite dev` to start the web server.
 
 Then go to `http://localhost:5173/debug.html` and open up the console in your web browser and wait until your computer runs the inference.
 
-At the moment, the YouTube transcript isn't able to be fetched.
+### Debugging the YouTube Scraper
+
+`cd` into `scripts/`
+
+run `pnpm tsc get-youtube-content.ts`
+
+Open up a YouTube video page. Then do `ctrl/cmd + shift + i` to open up the browser console. Go back and copy the compiled `get-youtube-content.js` code and paste it in.
+
+> [!NOTE]
+> You may run into your browser telling you not to paste in stuff. Just go ahead and override it.
+
+Now just go ahead and run each of the functions in your browser by typing their name plus parentheses.
 
 ## Extension Organization
 
