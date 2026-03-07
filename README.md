@@ -52,7 +52,7 @@ Then go to `http://localhost:5173/debug.html` and open up the console in your we
 
 `cd` into `scripts/`
 
-run `pnpm tsc get-youtube-content.ts`
+run `pnpm tsc debug-get-youtube-content.ts`
 
 Open up a YouTube video page. Go into the video's description and press the "Show Transcript" button. This makes the transcript available to be scraped.
 
