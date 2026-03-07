@@ -46,7 +46,7 @@ Run `pnpm install` to get the dependent packages.
 
 Run `pnpm vite dev` to start the web server.
 
-Then go to `http://localhost:5173/debug.html` and open up the console in your web browser and wait until your computer runs the inference.
+Then go to `http://localhost:5173/debug.html` and open up the console in your web browser (`ctrl/cmd + shift + i` then click "Console") and wait until your computer runs the inference.
 
 ### Debugging the YouTube Scraper
 
@@ -54,7 +54,9 @@ Then go to `http://localhost:5173/debug.html` and open up the console in your we
 
 run `pnpm tsc get-youtube-content.ts`
 
-Open up a YouTube video page. Then do `ctrl/cmd + shift + i` to open up the browser console. Go back and copy the compiled `get-youtube-content.js` code and paste it in.
+Open up a YouTube video page. Go into the video's description and press the "Show Transcript" button. This makes the transcript available to be scraped.
+
+Then do `ctrl/cmd + shift + i` to open up the browser console. Go back and copy the compiled `get-youtube-content.js` code and paste it in.
 
 > [!NOTE]
 > You may run into your browser telling you not to paste in stuff. Just go ahead and override it.
