@@ -33,7 +33,7 @@ To help you, when you click on a video, you can click on the extension and it wi
 Install `pnpm`
 
 ```sh
-curl -fsSL https://get.pnpm.io/install.sh | sh -\n\n
+curl -fsSL https://get.pnpm.io/install.sh | sh -
 ```
 
 `cd` into `scripts/`, then run the below.
