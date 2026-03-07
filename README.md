@@ -1,4 +1,23 @@
+# Brainrot or Not
 
+## Purpose
+
+This extension is made to help you make sure you're not wasting your time watching whatever YouTube video you click on.
+
+To help you, when you click on a video, you can click on the extension and it will analyze the video's information **on your computer** and let you know whether the video is *brainrot* -something that's just entertainment- or educational or productive, like a lecture or self-improvement video.
+
+## Languages and Libraries
+
+> [!NOTE]
+> These are what are currently being used and may be updated to include more or less.
+
+- HTML
+- Typescript
+  - multiple LangChain libraries
+    - A WebGPU library to run the model on the user's browser
+  - pnpm
+    - For managing packages
+- TailwindCSS
 
 > [!IMPORTANT]
 > The working parts of the program is just scripts right now. The two scripts you'll want to review are `debug-webgpu-transcript-processing.ts` and `get-youtube-content.ts`. The extension itself isn't functional yet.
