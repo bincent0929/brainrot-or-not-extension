@@ -56,7 +56,7 @@ run `pnpm tsc get-youtube-content.ts`
 
 Open up a YouTube video page. Go into the video's description and press the "Show Transcript" button. This makes the transcript available to be scraped.
 
-Then do `ctrl/cmd + shift + i` to open up the browser console. Go back and copy the compiled `get-youtube-content.js` code and paste it in.
+Then do `ctrl/cmd + shift + i` to open up the browser console. Go back and copy the compiled `debug-get-youtube-content.js` code and paste it in.
 
 > [!NOTE]
 > You may run into your browser telling you not to paste in stuff. Just go ahead and override it.
