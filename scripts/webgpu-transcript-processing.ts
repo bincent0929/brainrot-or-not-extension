@@ -1,56 +1,93 @@
 import { ChatWebLLM } from "@langchain/community/chat_models/webllm";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { InitProgressReport } from '@mlc-ai/web-llm';
+import { InitProgressReport } from "@mlc-ai/web-llm";
 
 import type { videoEval, youtubeData } from "./types";
 
-async function modelLoad() {
-    const model = new ChatWebLLM({
+let modelPromise: Promise<ChatWebLLM> | null = null;
+
+async function modelLoad(): Promise<ChatWebLLM> {
+  if (!modelPromise) {
+    modelPromise = (async () => {
+      const model = new ChatWebLLM({
         model: "Llama-3.2-1B-Instruct-q4f16_1-MLC",
         chatOptions: {
-            temperature: 0.1,
-            context_window_size: 10000,
+          temperature: 0.1,
+          context_window_size: 10000,
         },
-    });
+      });
 
-    await model.initialize((progress: InitProgressReport) => {
+      await model.initialize((progress: InitProgressReport) => {
         console.log(progress);
-    });
+      });
 
-    return model;
+      return model;
+    })();
+  }
+
+  return modelPromise;
 }
 
-const prePrompt = "You will evaluate whether the transcript you are given is worth the time of the user. If it's educational or productive, you'll give it a high score. If it's for entertainment or pleasure, give it a lower score. The goal is to help the user get an idea of whether they're better off watching something else with their time. You'll score it from 0.0 to 5.0. With 0.0 being purely entertainment or \"brainrot\"; like a live stream recording or Reality TV episode. And 5.0 being something educational, productive, or powerful like a University lecture, TED Talk, or otherwise. Respond ONLY with a JSON object in this format: {\"score\": <float>, \"reason\": \"<brief reason>\"}";
+const prePrompt =
+  "You evaluate whether a YouTube video is worth the viewer's time. " +
+  "If it is educational, practical, or high-signal, score it higher. " +
+  "If it is mostly entertainment, score it lower. " +
+  "Use a 0.0 to 5.0 scale where 0.0 is pure entertainment/brainrot and 5.0 is deeply educational/productive. " +
+  'Respond ONLY with JSON in this exact format: {"score": <float>, "summary": "<1-2 sentence summary>", "reason": "<brief explanation for score>"}';
+
+function parseModelJson(content: string): videoEval {
+  const start = content.indexOf("{");
+  const end = content.lastIndexOf("}");
+
+  if (start === -1 || end === -1 || end <= start) {
+    throw new Error("Model response did not contain a JSON object.");
+  }
+
+  const parsed = JSON.parse(content.slice(start, end + 1)) as Partial<videoEval>;
+
+  if (typeof parsed.score !== "number") {
+    throw new Error("Model response is missing a numeric score.");
+  }
+
+  return {
+    score: Math.max(0, Math.min(5, parsed.score)),
+    summary: typeof parsed.summary === "string" ? parsed.summary : "Summary not provided.",
+    reason: typeof parsed.reason === "string" ? parsed.reason : "No reason provided.",
+  };
+}
 
 export async function processTranscript(youtubeData: youtubeData): Promise<videoEval> {
-    const model = await modelLoad();
+  const model = await modelLoad();
 
-    // Call the model with a message and await the response.
-    //console.log("Running the model on the transcript...")
-    const startTime = Date.now();
-    const response = await model.invoke([
-        new SystemMessage({
-            content: prePrompt
-        }),
-        new HumanMessage({ content: youtubeData.transcript }),
-    ]);
-    const inferenceMs = Date.now() - startTime;
-    
-    if(!response) {
-        throw Error("The inference crashed.")
-    }
+  const promptPayload = [
+    `Video title: ${youtubeData.video_title || "Unknown"}`,
+    `Channel: ${youtubeData.channel_name || "Unknown"}`,
+    `Video ID: ${youtubeData.vidId || "Unknown"}`,
+    "Transcript:",
+    youtubeData.transcript,
+  ].join("\n");
 
-    /**
-     * This literaly grabs the string from the output
-     */
-    const contentStr = typeof response.content === "string"
-        ? response.content
-        : (response.content as { text: string }[])[0].text;
+  const startTime = Date.now();
+  const response = await model.invoke([
+    new SystemMessage({
+      content: prePrompt,
+    }),
+    new HumanMessage({ content: promptPayload }),
+  ]);
+  const inferenceMs = Date.now() - startTime;
 
-    const modelResponse: videoEval = JSON.parse(contentStr);
- 
-    console.log(modelResponse);
-    console.log(`Inference time: ${inferenceMs}ms`);
+  if (!response) {
+    throw new Error("The inference crashed.");
+  }
 
-    return modelResponse;
+  const contentStr =
+    typeof response.content === "string"
+      ? response.content
+      : (response.content as { text: string }[])[0]?.text ?? "";
+  const modelResponse = parseModelJson(contentStr);
+
+  console.log(modelResponse);
+  console.log(`Inference time: ${inferenceMs}ms`);
+
+  return modelResponse;
 }

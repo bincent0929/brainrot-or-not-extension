@@ -1,12 +1,31 @@
-<link href="styles/popup.css" rel="stylesheet"/>
-<script type="module" src="popup.js"></script>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brainrot Or Not</title>
+    <script type="module" src="/scripts/popup.ts"></script>
+  </head>
+  <body>
+    <main class="popup">
+      <h1 class="title">Brainrot Or Not</h1>
+      <p id="status" class="status">Ready to analyze the current YouTube video.</p>
+      <button id="analyze-btn" class="analyze-btn" type="button">Analyze Video</button>
 
-<div class="container">
-  <div>
-    <div id="title">A little about the video</div>
-
-    <div id="analyze-container"></div>
-
-    <div id="video-analysis"></div>
-  </div>
-</div>
+      <section id="result" class="result hidden" aria-live="polite">
+        <div class="metric-row">
+          <span class="metric-label">Score</span>
+          <span id="score" class="metric-value">-</span>
+        </div>
+        <div class="metric-row column">
+          <span class="metric-label">Summary</span>
+          <p id="summary" class="summary"></p>
+        </div>
+        <div class="metric-row column">
+          <span class="metric-label">Why</span>
+          <p id="reason" class="reason"></p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

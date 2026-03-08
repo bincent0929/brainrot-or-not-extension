@@ -1,4 +1,10 @@
 {
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@langchain/community": "^1.1.17",
     "@langchain/core": "^1.1.27",
@@ -7,6 +13,7 @@
     "langchain": "^1.2.25"
   },
   "devDependencies": {
+    "@crxjs/vite-plugin": "^2.1.0-beta.32",
     "@tailwindcss/vite": "^4.2.0",
     "tailwindcss": "^4.2.0",
     "tsx": "^4.21.0",
