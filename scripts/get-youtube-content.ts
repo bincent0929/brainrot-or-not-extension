@@ -1,65 +1,15 @@
-type YoutubeCaptionTrack = {
-  baseUrl: string;
-  languageCode?: string;
-  kind?: string;
-};
-
-type CaptionEvent = {
-  segs?: Array<{ utf8?: string }>;
-};
-
-type CaptionTrackResponse = {
-  events?: CaptionEvent[];
-};
-
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
 
-function getCaptionTracksFromPlayerResponse(): YoutubeCaptionTrack[] {
-  const win = window as typeof window & {
-    ytInitialPlayerResponse?: {
-      captions?: {
-        playerCaptionsTracklistRenderer?: {
-          captionTracks?: YoutubeCaptionTrack[];
-        };
-      };
-    };
-  };
-
-  return (
-    win.ytInitialPlayerResponse?.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? []
-  );
-}
-
-function pickPreferredTrack(tracks: YoutubeCaptionTrack[]): YoutubeCaptionTrack | null {
-  if (!tracks.length) {
-    return null;
-  }
-
-  const englishTrack = tracks.find((track) => track.languageCode?.startsWith("en") && track.kind !== "asr");
-  if (englishTrack) {
-    return englishTrack;
-  }
-
-  const firstNonAsr = tracks.find((track) => track.kind !== "asr");
-  if (firstNonAsr) {
-    return firstNonAsr;
-  }
-
-  return tracks[0];
-}
-
 function scrapeTranscriptFromDom(): string {
-  // Grab all transcript segment nodes
   /**
    * With the current tsconfig this gives an error
    * it can be ignored. The compiled output works.
    */
-  const segments = Array.from(document.querySelectorAll("ytd-transcript-segment-renderer"));
-
+  const segments = Array.from(document.querySelectorAll("transcript-segment-view-model"));
   if (!segments.length) {
     /**
      * This should eventually send something to update
@@ -68,33 +18,22 @@ function scrapeTranscriptFromDom(): string {
     console.warn("No transcript segments found. Go into the video's description and click the \"Show Transcript\" button.");
     return;
   }
-
   // Extract text from each segment
   const lines = segments
     .map(seg => {
-      const textEl = seg.querySelector("yt-formatted-string.segment-text");
-      const tsEl = seg.querySelector(".segment-timestamp");
-
+      const textEl = seg.querySelector(".yt-core-attributed-string");
+      const tsEl = seg.querySelector(".ytwTranscriptSegmentViewModelTimestamp");
       const text = (textEl?.textContent || "").trim();
       const ts = (tsEl?.textContent || "").trim();
-
       // Skip empty entries
       if (!text) return null;
-
       // Transcript only (no timestamps)
       return text;
-
       // Transcript with timestamps
       // return ts ? `${ts} ${text}` : text;
     })
     .filter(Boolean);
-
   const transcript = lines.join(" ");
-
-  // For debug
-  //console.log("Transcript lines:", lines.length);
-  //console.log(transcript);
-
   return transcript;
 }
 
@@ -113,29 +52,39 @@ async function waitForTranscriptDom(timeoutMs = 7000): Promise<string> {
 }
 
 async function clickShowTranscriptButton(): Promise<void> {
-  // Only click "show transcript" controls.
   const clickableCandidates = Array.from(
     document.querySelectorAll<HTMLElement>("button, tp-yt-paper-button")
   );
-  const showTranscriptButton = clickableCandidates.find((candidate) => {
+  const transcriptButton = clickableCandidates.find((candidate) => {
     const label = `${candidate.getAttribute("aria-label") ?? ""} ${candidate.textContent ?? ""}`.toLowerCase();
-    return label.includes("show transcript");
+    return label.includes("show transcript") || label.includes("transcript");
   });
 
-  if (showTranscriptButton) {
-    showTranscriptButton.click();
+  if (transcriptButton) {
+    transcriptButton.click();
     await sleep(800);
     return;
   }
 
+  const hiddenTranscriptPanel = document.querySelector<HTMLElement>(
+    'ytd-engagement-panel-section-list-renderer[target-id*="transcript"][visibility="ENGAGEMENT_PANEL_VISIBILITY_HIDDEN"]'
+  );
+  if (hiddenTranscriptPanel) {
+    hiddenTranscriptPanel.setAttribute("visibility", "ENGAGEMENT_PANEL_VISIBILITY_EXPANDED");
+    await sleep(500);
+    return;
+  }
+
   const moreActionsButton = document.querySelector<HTMLElement>(
-    "ytd-watch-metadata #actions button[aria-label]"
+    "ytd-watch-metadata #actions button[aria-label], ytd-watch-metadata #menu button[aria-label], #actions #button-shape button[aria-label]"
   );
   moreActionsButton?.click();
   await sleep(500);
 
   const menuItems = Array.from(
-    document.querySelectorAll<HTMLElement>("ytd-menu-service-item-renderer tp-yt-paper-item")
+    document.querySelectorAll<HTMLElement>(
+      "ytd-menu-popup-renderer tp-yt-paper-item, tp-yt-paper-listbox tp-yt-paper-item, ytd-popup-container ytd-menu-service-item-renderer"
+    )
   );
 
   const transcriptMenuItem = menuItems.find((item) =>
@@ -153,17 +102,6 @@ async function clickShowTranscriptButton(): Promise<void> {
  * 2) Fallback to opening transcript UI automatically and scraping transcript DOM.
  */
 export async function scrapeTranscript(): Promise<string> {
-  // If transcript was just opened, give YouTube a moment to render segment nodes.
-  //const existingDomTranscript = await waitForTranscriptDom(1200); 
-  //if (existingDomTranscript) return existingDomTranscript;
-
-  /*
-  const byCaptionTrack = await fetchTranscriptFromCaptionTrack();
-  if (byCaptionTrack) {
-    return byCaptionTrack;
-  }
-  */
-
   await clickShowTranscriptButton();
   return waitForTranscriptDom();
 }
