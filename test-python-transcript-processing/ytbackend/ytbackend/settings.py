@@ -13,13 +13,18 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() in ("true", "1", "yes")
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 INSTALLED_APPS = [
+    # database records
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
+    #"django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
+    #"django.contrib.staticfiles",
+    # This is the most important.
+    # It's the basis for the API
     "rest_framework",
+    # This is all the scripts that actually
+    # process the requests to the API
     "transcripts",
 ]
 
@@ -61,7 +66,7 @@ DATABASES = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-STATIC_URL = "static/"
+#STATIC_URL = "static/"
 
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
