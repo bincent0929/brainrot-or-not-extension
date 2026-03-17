@@ -13,16 +13,21 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() in ("true", "1", "yes")
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 INSTALLED_APPS = [
-    # database records
-    "django.contrib.admin",
-    "django.contrib.auth",
     "django.contrib.contenttypes",
     #"django.contrib.sessions",
+    
+    # good for looking through the 
+    # database records
+    "django.contrib.admin",
+    # required by the admin app
     "django.contrib.messages",
+    "django.contrib.auth",
+    
     #"django.contrib.staticfiles",
     # This is the most important.
     # It's the basis for the API
     "rest_framework",
+    
     # This is all the scripts that actually
     # process the requests to the API
     "transcripts",
