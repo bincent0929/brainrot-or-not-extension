@@ -14,3 +14,6 @@ pnpm-lock.yaml
 dist/
 
 .vite/
+
+__pycache__
+test-python-transcript-processing/video_scores.db
