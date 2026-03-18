@@ -13,9 +13,11 @@ export type Video = {
 };
 
 export type videoEval = {
-  score: number;
-  summary: string;
-  reason: string;
+  video_score: number | null;
+  scored_at: string | null;
+  model_used: string | null;
+  trained: boolean | null;
+  prompt_used: string | null;
 };
 
 export type messageTypes =
@@ -24,6 +26,11 @@ export type messageTypes =
   | videoEvalMessage
   | analysisStatusMessage
   | analysisFailedMessage;
+
+export type youtubeDataMessage = {
+  type: "YOUTUBE_DATA"
+  video: Video
+}
 
 export interface GrabVideoInfoMessage {
   type: "GRAB_VIDEO_INFO";

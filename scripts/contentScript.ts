@@ -1,4 +1,6 @@
-import type { GrabVideoInfoMessage, youtubeDataMessage } from "./types";
+import type { GrabVideoInfoMessage, Video, youtubeDataMessage } from "./types";
+
+import { fetch_video_text_data } from "./get-youtube-content";
 
 (() => {
   chrome.runtime.onMessage.addListener((obj: GrabVideoInfoMessage, _sender, sendResponse): boolean => {
@@ -9,33 +11,21 @@ import type { GrabVideoInfoMessage, youtubeDataMessage } from "./types";
     sendResponse({ accepted: true });
 
     (async () => {
-      try {
-        const transcript = await scrapeTranscript();
-        if (!transcript) {
-          chrome.runtime.sendMessage({
-            type: "ANALYZE_FAILED",
-            error:
-              "Could not find a transcript for this video. If the creator disabled captions, analysis cannot run.",
-          });
-          return;
-        }
-
-        const message: youtubeDataMessage = {
-          type: "ANALYZE",
-          youtubeData: {
-            transcript,
-            channel_name: grab_channel(),
-            video_title: grab_video_title(),
-            vidId: grab_vId(),
-          },
-        };
-        chrome.runtime.sendMessage(message);
-      } catch (error) {
+      const video_data: Video = await fetch_video_text_data();
+      if (!video_data.transcript) {
         chrome.runtime.sendMessage({
-          type: "ANALYZE_FAILED",
-          error: error instanceof Error ? error.message : "Failed to extract YouTube metadata.",
+          type: "VIDEO_TEXT_DATA_FETCH_FAILED",
+          error:
+            "Could not find a transcript for this video. If the creator disabled captions, the transcript cannot be found.",
         });
+        return;
       }
+
+      const message: youtubeDataMessage = {
+        type: "YOUTUBE_DATA",
+        video: video_data
+      };
+      chrome.runtime.sendMessage(message);
     })();
 
     return false;
