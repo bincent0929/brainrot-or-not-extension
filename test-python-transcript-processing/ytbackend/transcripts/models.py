@@ -9,6 +9,7 @@ class Video(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     video_score = models.FloatField(null=True, blank=True)
+    score_reasoning = models.TextField(null=True, blank=True)
     scored_at = models.DateTimeField(null=True, blank=True)
     model_used = models.CharField(null=True, blank=True, max_length=100)
     # whether it's a model trained for the case

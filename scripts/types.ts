@@ -6,6 +6,7 @@ export type Video = {
   transcript: string;
   created_at: string; // ISO 8601 datetime string
   video_score: number | null;
+  score_reasoning: string | null;
   scored_at: string | null;
   model_used: string | null;
   trained: boolean | null;
@@ -20,6 +21,11 @@ export type videoEval = {
   prompt_used: string | null;
 };
 
+/**
+ * The types of the messages should be what should be done to the
+ * data in the messsage. Not what data is in the message.
+ */
+
 export type messageTypes =
   | GrabVideoInfoMessage
   | youtubeDataMessage
@@ -28,7 +34,7 @@ export type messageTypes =
   | analysisFailedMessage;
 
 export type youtubeDataMessage = {
-  type: "YOUTUBE_DATA"
+  type: "ANALYZE"
   video: Video
 }
 

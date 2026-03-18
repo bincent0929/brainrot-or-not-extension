@@ -25,7 +25,7 @@ const LAST_ANALYSIS_STORAGE_KEY = "lastAnalysis";
         chrome.runtime.sendMessage(statusMessage);
 
         const dataMessage = obj as youtubeDataMessage;
-        const videoEval = await processTranscript(dataMessage.youtubeData);
+        const videoEval = await processTranscript(dataMessage.video);
 
         const resultMessage: videoEvalMessage = {
           type: "ANALYZE_SAVED",

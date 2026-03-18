@@ -22,7 +22,7 @@ import { fetch_video_text_data } from "./get-youtube-content";
       }
 
       const message: youtubeDataMessage = {
-        type: "YOUTUBE_DATA",
+        type: "ANALYZE",
         video: video_data
       };
       chrome.runtime.sendMessage(message);

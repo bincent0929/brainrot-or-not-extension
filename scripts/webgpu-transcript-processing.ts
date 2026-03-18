@@ -2,15 +2,15 @@ import { ChatWebLLM } from "@langchain/community/chat_models/webllm";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { InitProgressReport } from "@mlc-ai/web-llm";
 
-import type { videoEval, youtubeData } from "./types";
+import type { Video } from "./types";
 
 let modelPromise: Promise<ChatWebLLM> | null = null;
 
-async function modelLoad(): Promise<ChatWebLLM> {
+async function modelLoad(model_name: string): Promise<ChatWebLLM> {
   if (!modelPromise) {
     modelPromise = (async () => {
       const model = new ChatWebLLM({
-        model: "Llama-3.2-1B-Instruct-q4f16_1-MLC",
+        model: model_name,
         chatOptions: {
           temperature: 0.1,
           context_window_size: 10000,
@@ -56,19 +56,22 @@ function parseModelJson(content: string): videoEval {
   };
 }
 
-export async function processTranscript(youtubeData: youtubeData): Promise<videoEval> {
-  const model = await modelLoad();
+export async function processTranscript(video: Video): Promise<Video> {
+  const model_name = "Llama-3.2-1B-Instruct-q4f16_1-MLC";
+  const loaded_model = await modelLoad(model_name);
 
   const promptPayload = [
-    `Video title: ${youtubeData.video_title || "Unknown"}`,
-    `Channel: ${youtubeData.channel_name || "Unknown"}`,
-    `Video ID: ${youtubeData.vidId || "Unknown"}`,
-    "Transcript:",
-    youtubeData.transcript,
+    `Video title: ${video.title || "Unknown"}`,
+    `Channel: ${video.channel_name || "Unknown"}`,
+    "Transcript:", video.transcript,
   ].join("\n");
 
+  video.prompt_used = prePrompt;
+  video.model_used = model_name;
+  video.trained = false;
+
   const startTime = Date.now();
-  const response = await model.invoke([
+  const response = await loaded_model.invoke([
     new SystemMessage({
       content: prePrompt,
     }),
