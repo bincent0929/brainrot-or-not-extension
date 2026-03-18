@@ -1,8 +1,15 @@
-export type youtubeData = {
-  transcript: string,
-  channel_name: string,
-  video_title: string,
-  vidId: string;
+export type Video = {
+  id: number;
+  video_id: string;
+  title: string;
+  channel_name: string;
+  transcript: string;
+  created_at: string; // ISO 8601 datetime string
+  video_score: number | null;
+  scored_at: string | null;
+  model_used: string | null;
+  trained: boolean | null;
+  prompt_used: string | null;
 };
 
 export type videoEval = {
@@ -20,17 +27,6 @@ export type messageTypes =
 
 export interface GrabVideoInfoMessage {
   type: "GRAB_VIDEO_INFO";
-}
-
-export interface youtubeDataMessage {
-  type: "ANALYZE";
-  youtubeData: youtubeData;
-}
-
-export interface videoEvalMessage {
-  type: "ANALYZE_SAVED";
-  youtubeData: youtubeData;
-  videoEval: videoEval;
 }
 
 export interface analysisStatusMessage {

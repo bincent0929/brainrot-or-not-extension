@@ -1,12 +1,5 @@
 import type { GrabVideoInfoMessage, youtubeDataMessage } from "./types";
 
-import {
-  scrapeTranscript,
-  grab_channel,
-  grab_video_title,
-  grab_vId,
-} from "./get-youtube-content";
-
 (() => {
   chrome.runtime.onMessage.addListener((obj: GrabVideoInfoMessage, _sender, sendResponse): boolean => {
     if (obj.type !== "GRAB_VIDEO_INFO") {
