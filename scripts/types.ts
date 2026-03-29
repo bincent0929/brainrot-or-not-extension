@@ -51,3 +51,7 @@ export interface analysisFailedMessage {
   type: "ANALYZE_FAILED";
   error: string;
 }
+
+export interface videoEvalMessage {
+  type: "EVALUATE";
+}
