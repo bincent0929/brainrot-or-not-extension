@@ -13,13 +13,14 @@ export type Video = {
   prompt_used: string | null;
 };
 
-export type videoEval = {
-  video_score: number | null;
-  scored_at: string | null;
-  model_used: string | null;
-  trained: boolean | null;
-  prompt_used: string | null;
-};
+export type videoEval = 
+  Pick<Video, 
+  "video_score" 
+  | "scored_at" 
+  | "model_used" 
+  | "trained" 
+  | "prompt_used"
+  >;
 
 /**
  * The types of the messages should be what should be done to the
@@ -30,28 +31,35 @@ export type messageTypes =
   | GrabVideoInfoMessage
   | analysisMessage
   | videoEvalMessage
-  | analysisStatusMessage
-  | analysisFailedMessage;
+  | analysisUpdateMessage
+  | analysisFailedMessage
+  | presentAnalysisMessage;
 
-export type analysisMessage = {
+type analysisMessage = {
   type: "ANALYZE"
   video: Video
 }
 
-export interface GrabVideoInfoMessage {
+type GrabVideoInfoMessage = {
   type: "GRAB_VIDEO_INFO";
 }
 
-export interface analysisStatusMessage {
-  type: "ANALYZE_STATUS";
+type analysisUpdateMessage = {
+  type: "UPDATE_STATUS";
   status: string;
 }
 
-export interface analysisFailedMessage {
-  type: "ANALYZE_FAILED";
+type analysisFailedMessage = {
+  type: "RETURN_ANALYZE_FAILED";
   error: string;
 }
 
-export interface videoEvalMessage {
+type videoEvalMessage = {
   type: "EVALUATE";
+}
+
+type presentAnalysisMessage = {
+  type: "PRESENT_ANALYSIS",
+  youtubeData: Video,
+  video_eval: videoEval
 }

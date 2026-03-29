@@ -1,9 +1,6 @@
 import type {
-  analysisFailedMessage,
-  analysisStatusMessage,
   messageTypes,
-  videoEvalMessage,
-  youtubeDataMessage,
+  Video
 } from "./types";
 
 import { processTranscript } from "./webgpu-transcript-processing";
@@ -18,19 +15,18 @@ const LAST_ANALYSIS_STORAGE_KEY = "lastAnalysis";
 
     (async () => {
       try {
-        const statusMessage: analysisStatusMessage = {
-          type: "ANALYZE_STATUS",
+        const statusMessage: messageTypes = {
+          type: "UPDATE_STATUS",
           status: "Running on-device transcript analysis...",
         };
         chrome.runtime.sendMessage(statusMessage);
 
-        const dataMessage = obj as youtubeDataMessage;
-        const videoEval = await processTranscript(dataMessage.video);
+        const videoEval = await processTranscript(obj.video);
 
-        const resultMessage: videoEvalMessage = {
-          type: "ANALYZE_SAVED",
-          youtubeData: dataMessage.youtubeData,
-          videoEval,
+        const resultMessage: messageTypes = {
+          type: "PRESENT_ANALYSIS",
+          youtubeData: obj.video,
+          video_eval: videoEval,
         };
 
         await chrome.storage.local.set({
@@ -42,9 +38,10 @@ const LAST_ANALYSIS_STORAGE_KEY = "lastAnalysis";
 
         chrome.runtime.sendMessage(resultMessage);
       } catch (error) {
-        const failedMessage: analysisFailedMessage = {
-          type: "ANALYZE_FAILED",
-          error: error instanceof Error ? error.message : "Analysis failed in the background worker.",
+        const failedMessage: messageTypes = {
+          type: "RETURN_ANALYZE_FAILED",
+          error: error instanceof Error ? 
+            error.message : "Analysis failed in the background worker.",
         };
         chrome.runtime.sendMessage(failedMessage);
       }

@@ -1,9 +1,9 @@
-import type { GrabVideoInfoMessage, Video, analysisMessage } from "./types";
+import type { messageTypes, Video } from "./types";
 
 import { fetch_video_text_data } from "./get-youtube-content";
 
 (() => {
-  chrome.runtime.onMessage.addListener((obj: GrabVideoInfoMessage, _sender, sendResponse): boolean => {
+  chrome.runtime.onMessage.addListener((obj: messageTypes, _sender, sendResponse): boolean => {
     if (obj.type !== "GRAB_VIDEO_INFO") {
       return false;
     }
@@ -21,7 +21,7 @@ import { fetch_video_text_data } from "./get-youtube-content";
         return;
       }
 
-      const message: analysisMessage = {
+      const message: messageTypes = {
         type: "ANALYZE",
         video: video_data
       };
