@@ -1,3 +1,8 @@
+/**
+ * Functions used by the extension to work with the backend.
+ * May have a CORS issue, not really sure.
+ */
+
 import type { Video } from "./types";
 
 function grab_vId(): string {

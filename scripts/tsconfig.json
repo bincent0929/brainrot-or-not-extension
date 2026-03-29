@@ -13,6 +13,6 @@
     "resolveJsonModule": true,
     "noEmit": true
   },
-  "include": ["*.ts"],
+  "include": ["*.ts", "debug-scripts/debug-transcript-backend.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,3 +1,5 @@
+Type messages by what you want to happen (intent/action), not by what data they carry.
+
 # Brainrot or Not
 
 ## Purpose

@@ -28,12 +28,12 @@ export type videoEval = {
 
 export type messageTypes =
   | GrabVideoInfoMessage
-  | youtubeDataMessage
+  | analysisMessage
   | videoEvalMessage
   | analysisStatusMessage
   | analysisFailedMessage;
 
-export type youtubeDataMessage = {
+export type analysisMessage = {
   type: "ANALYZE"
   video: Video
 }

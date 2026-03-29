@@ -1,4 +1,4 @@
-import type { GrabVideoInfoMessage, Video, youtubeDataMessage } from "./types";
+import type { GrabVideoInfoMessage, Video, analysisMessage } from "./types";
 
 import { fetch_video_text_data } from "./get-youtube-content";
 
@@ -14,14 +14,14 @@ import { fetch_video_text_data } from "./get-youtube-content";
       const video_data: Video = await fetch_video_text_data();
       if (!video_data.transcript) {
         chrome.runtime.sendMessage({
-          type: "VIDEO_TEXT_DATA_FETCH_FAILED",
+          type: "RETURN_DATA_FETCH_ERROR",
           error:
             "Could not find a transcript for this video. If the creator disabled captions, the transcript cannot be found.",
         });
         return;
       }
 
-      const message: youtubeDataMessage = {
+      const message: analysisMessage = {
         type: "ANALYZE",
         video: video_data
       };

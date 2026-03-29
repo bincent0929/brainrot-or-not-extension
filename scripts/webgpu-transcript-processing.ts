@@ -1,3 +1,8 @@
+/**
+ * Includes functions for processing the video data on the user's
+ * GPU locally.
+ */
+
 import { ChatWebLLM } from "@langchain/community/chat_models/webllm";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { InitProgressReport } from "@mlc-ai/web-llm";
