@@ -5,26 +5,45 @@
 
 import { ChatWebLLM } from "@langchain/community/chat_models/webllm";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { InitProgressReport } from "@mlc-ai/web-llm";
+//import { InitProgressReport } from "@mlc-ai/web-llm";
 
 import type { Video, modelResponse } from "./types";
 
+/**
+ * This is defined here to avoid loading
+ * the model multiple times.
+ */
 let modelPromise: Promise<ChatWebLLM> | null = null;
 
+/**
+ * This is just rippped right from LangChain's website.
+ * It sets up the model for receiving prompts
+ * and allows you to configure it.
+ * @param model_name
+ * @returns 
+ */
 async function modelLoad(model_name: string): Promise<ChatWebLLM> {
   if (!modelPromise) {
     modelPromise = (async () => {
       const model = new ChatWebLLM({
         model: model_name,
         chatOptions: {
+          /**
+           * temperature is the most important.
+           * It's supposed to keep the 
+           * response consistent no
+           * matter when the model is ran.
+           */
           temperature: 0.1,
           context_window_size: 10000,
         },
       });
 
+      /*
       await model.initialize((progress: InitProgressReport) => {
         console.log(progress);
       });
+      */
 
       return model;
     })();
@@ -48,16 +67,11 @@ function parseModelJson(content: string): modelResponse {
     throw new Error("Model response did not contain a JSON object.");
   }
 
-  const parsed = JSON.parse(content.slice(start, end + 1)) as Partial<videoEval>;
-
-  if (typeof parsed.video_score !== "number") {
-    throw new Error("Model response is missing a numeric score.");
-  }
+  const parsed = JSON.parse(content.slice(start, end + 1)) as modelResponse;
 
   return {
-    video_score: Math.max(0, Math.min(5, parsed.video_score)),
-    summary: typeof parsed.summary === "string" ? parsed.summary : "Summary not provided.",
-    reason: typeof parsed.reason === "string" ? parsed.reason : "No reason provided.",
+    video_score: parsed.video_score,
+    score_reasoning: parsed.score_reasoning
   };
 }
 
@@ -76,6 +90,12 @@ export async function processTranscript(video: Video): Promise<Video> {
     "Transcript:", video.transcript,
   ].join("\n");
 
+  /**
+   * The SystemMessage is how the model is
+   * supposed to respond to any given input.
+   * The HumanMessage is whatever input is given
+   * that the model should respond to.
+   */
   const response = await loadedModel.invoke([
     new SystemMessage({
       content: prePrompt,
