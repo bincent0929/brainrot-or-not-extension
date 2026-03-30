@@ -7,7 +7,7 @@ import { ChatWebLLM } from "@langchain/community/chat_models/webllm";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { InitProgressReport } from "@mlc-ai/web-llm";
 
-import type { videoEval } from "./types";
+import type { Video, modelResponse } from "./types";
 
 let modelPromise: Promise<ChatWebLLM> | null = null;
 
@@ -38,9 +38,9 @@ const prePrompt =
   "If it is educational, practical, or high-signal, score it higher. " +
   "If it is mostly entertainment, score it lower. " +
   "Use a 0.0 to 5.0 scale where 0.0 is pure entertainment/brainrot and 5.0 is deeply educational/productive. " +
-  'Respond ONLY with JSON in this exact format: {"score": <float>, "summary": "<1-2 sentence summary>", "reason": "<brief explanation for score>"}';
+  'Respond ONLY with JSON in this exact format: {"score": <float>, "summary": "<1-2 sentence summary>"';
 
-function parseModelJson(content: string): videoEval {
+function parseModelJson(content: string): modelResponse {
   const start = content.indexOf("{");
   const end = content.lastIndexOf("}");
 
@@ -50,39 +50,38 @@ function parseModelJson(content: string): videoEval {
 
   const parsed = JSON.parse(content.slice(start, end + 1)) as Partial<videoEval>;
 
-  if (typeof parsed.score !== "number") {
+  if (typeof parsed.video_score !== "number") {
     throw new Error("Model response is missing a numeric score.");
   }
 
   return {
-    score: Math.max(0, Math.min(5, parsed.score)),
+    video_score: Math.max(0, Math.min(5, parsed.video_score)),
     summary: typeof parsed.summary === "string" ? parsed.summary : "Summary not provided.",
     reason: typeof parsed.reason === "string" ? parsed.reason : "No reason provided.",
   };
 }
 
 export async function processTranscript(video: Video): Promise<Video> {
-  const model_name = "Llama-3.2-1B-Instruct-q4f16_1-MLC";
-  const loaded_model = await modelLoad(model_name);
+  Object.assign(video, {
+    prompt_used: prePrompt, 
+    model_used: "Llama-3.2-1B-Instruct-q4f16_1-MLC", 
+    trained: false
+  });
+
+  const loadedModel = await modelLoad(video.model_used);
 
   const promptPayload = [
-    `Video title: ${video.title || "Unknown"}`,
-    `Channel: ${video.channel_name || "Unknown"}`,
+    `Video title: ${video.title}`,
+    `Channel: ${video.channel_name}`,
     "Transcript:", video.transcript,
   ].join("\n");
 
-  video.prompt_used = prePrompt;
-  video.model_used = model_name;
-  video.trained = false;
-
-  const startTime = Date.now();
-  const response = await loaded_model.invoke([
+  const response = await loadedModel.invoke([
     new SystemMessage({
       content: prePrompt,
     }),
     new HumanMessage({ content: promptPayload }),
   ]);
-  const inferenceMs = Date.now() - startTime;
 
   if (!response) {
     throw new Error("The inference crashed.");
@@ -92,10 +91,12 @@ export async function processTranscript(video: Video): Promise<Video> {
     typeof response.content === "string"
       ? response.content
       : (response.content as { text: string }[])[0]?.text ?? "";
-  const modelResponse = parseModelJson(contentStr);
+  const modelResponse: modelResponse = parseModelJson(contentStr);
 
-  console.log(modelResponse);
-  console.log(`Inference time: ${inferenceMs}ms`);
+  Object.assign(video, {
+    video_score: modelResponse.video_score, 
+    score_reasoning: modelResponse.score_reasoning
+  });
 
-  return modelResponse;
+  return video;
 }

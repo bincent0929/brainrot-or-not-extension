@@ -4,6 +4,11 @@ import { fetch_video_text_data } from "./get-youtube-content";
 
 (() => {
   chrome.runtime.onMessage.addListener((obj: messageTypes, _sender, sendResponse): boolean => {
+    /**
+     * Received from the user pressing the analysis button in
+     * the popup. 
+     * Found in popup.ts.
+     */
     if (obj.type !== "GRAB_VIDEO_INFO") {
       return false;
     }
@@ -18,9 +23,13 @@ import { fetch_video_text_data } from "./get-youtube-content";
           error:
             "Could not find a transcript for this video. If the creator disabled captions, the transcript cannot be found.",
         });
-        return;
+        return false;
       }
 
+      /**
+       * This messsage is sent to the background worker.
+       * Found in background.ts.
+       */
       const message: messageTypes = {
         type: "ANALYZE",
         video: video_data

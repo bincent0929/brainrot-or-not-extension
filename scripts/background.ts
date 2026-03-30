@@ -9,24 +9,38 @@ const LAST_ANALYSIS_STORAGE_KEY = "lastAnalysis";
 
 (() => {
   chrome.runtime.onMessage.addListener((obj: messageTypes): boolean => {
+    /**
+     * This is received from the content script.
+     * It contains the video's ID.
+     * See contentScript.ts for more.
+     */
     if (obj.type !== "ANALYZE") {
       return false;
     }
 
     (async () => {
       try {
+        /**
+         * This is sent as an update on the progress of
+         * the analysis of the video to the popup.
+         * See popup.ts for the receiving.
+         */
         const statusMessage: messageTypes = {
           type: "UPDATE_STATUS",
           status: "Running on-device transcript analysis...",
         };
         chrome.runtime.sendMessage(statusMessage);
 
-        const videoEval = await processTranscript(obj.video);
+        const video_data = await processTranscript(obj.video);
 
+        /**
+         * This is sent with the final values of the analysis
+         * to the popup.
+         * See popup.ts for how it's handled.
+         */
         const resultMessage: messageTypes = {
           type: "PRESENT_ANALYSIS",
-          youtubeData: obj.video,
-          video_eval: videoEval,
+          analysis_result: video_data,
         };
 
         await chrome.storage.local.set({

@@ -13,14 +13,8 @@ export type Video = {
   prompt_used: string | null;
 };
 
-export type videoEval = 
-  Pick<Video, 
-  "video_score" 
-  | "scored_at" 
-  | "model_used" 
-  | "trained" 
-  | "prompt_used"
-  >;
+export type modelResponse = 
+  Pick<Video, "video_score" | "score_reasoning">;
 
 /**
  * The types of the messages should be what should be done to the
@@ -29,13 +23,13 @@ export type videoEval =
 
 export type messageTypes =
   | GrabVideoInfoMessage
-  | analysisMessage
+  | analyzeMessage
   | videoEvalMessage
   | analysisUpdateMessage
   | analysisFailedMessage
   | presentAnalysisMessage;
 
-type analysisMessage = {
+type analyzeMessage = {
   type: "ANALYZE"
   video: Video
 }
@@ -60,6 +54,5 @@ type videoEvalMessage = {
 
 type presentAnalysisMessage = {
   type: "PRESENT_ANALYSIS",
-  youtubeData: Video,
-  video_eval: videoEval
+  analysis_result: Video
 }
