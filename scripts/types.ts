@@ -26,7 +26,7 @@ export type messageTypes =
   | analyzeMessage
   | analysisUpdateMessage
   | analysisFailedMessage
-  | presentAnalysisMessage
+  | analysisFinishedMessage
   | dataFetchError;
 
 /**
@@ -72,9 +72,9 @@ type analysisUpdateMessage = {
  * (Maybe will change to not send data but rather communicate
  * that the data has been saved to the chrome storage)
  */
-type presentAnalysisMessage = {
+type analysisFinishedMessage = {
   type: "PRESENT_ANALYSIS",
-  analysis_result: Video
+  status: string
 }
 
 /**

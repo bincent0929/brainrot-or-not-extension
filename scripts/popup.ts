@@ -26,7 +26,7 @@ function setLoading(isLoading: boolean): void {
   buttonEl.textContent = isLoading ? "Analyzing..." : "Analyze Video";
 }
 
-function renderResult(video: Video): void {
+function renderResult(): void {
   const resultEl = document.getElementById("result");
   const scoreEl = document.getElementById("score");
   const reasoningEl = document.getElementById("summary");
@@ -37,6 +37,10 @@ function renderResult(video: Video): void {
 
   if (!resultEl || !scoreEl || !reasoningEl) return;
 
+  /**
+   * This needs to be changed to pull from the chrome
+   * data storage or the backend.
+   */
   resultEl.classList.remove("hidden");
   scoreEl.textContent = video.video_score.toFixed(1);
   reasoningEl.textContent = video.score_reasoning;
@@ -85,7 +89,7 @@ function setupRuntimeListener(): void {
       
       case "PRESENT_ANALYSIS":
         setLoading(false);
-        renderResult(message.analysis_result);
+        renderResult();
         return false;
       
       case "RETURN_DATA_FETCH_ERROR":

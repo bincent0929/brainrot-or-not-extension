@@ -17,20 +17,26 @@ import { fetch_video_text_data } from "./get-youtube-content";
 
     (async () => {
       const video_data: Video = await fetch_video_text_data();
-      if (!video_data.transcript) {
-        chrome.runtime.sendMessage({
-          type: "RETURN_DATA_FETCH_ERROR",
-          error:
-            "Could not find a transcript for this video. If the creator disabled captions, the transcript cannot be found.",
-        });
-        return false;
+
+      switch (true) {
+        
+        case !video_data.transcript:
+          chrome.runtime.sendMessage({
+            type: "RETURN_DATA_FETCH_ERROR",
+            error:
+              "Could not find a transcript for this video. If the creator disabled captions, the transcript cannot be found.",
+          });
+          return false;
+          
+        default:
+          const message: messageTypes = {
+            type: "ANALYZE",
+            video: video_data
+          };
+          chrome.runtime.sendMessage(message);
+          
       }
 
-      const message: messageTypes = {
-        type: "ANALYZE",
-        video: video_data
-      };
-      chrome.runtime.sendMessage(message);
     })();
 
     return false;

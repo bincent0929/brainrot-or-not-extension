@@ -34,27 +34,30 @@ const LAST_ANALYSIS_STORAGE_KEY = "lastAnalysis";
         const video_data = await processTranscript(obj.video);
 
         /**
-         * This is sent with the final values of the analysis
-         * to the popup.
-         * See popup.ts for how it's handled.
-         */
-        const resultMessage: messageTypes = {
-          type: "PRESENT_ANALYSIS",
-          analysis_result: video_data,
-        };
-
-        /**
          * This saves the result to the Chromium storage.
          * I think I need to update it to do a little more.
+         * I'm not really sure how it's placing it in right now.
+         * 
+         * I also need to have this send to the backend and have it save there.
          */
         await chrome.storage.local.set({
           [LAST_ANALYSIS_STORAGE_KEY]: {
-            ...resultMessage,
+            ...video_data,
             analyzedAt: Date.now(),
           },
         });
 
-        chrome.runtime.sendMessage(resultMessage);
+        /**
+         * This is sent with the final values of the analysis
+         * to the popup.
+         * See popup.ts for how it's handled.
+         */
+        const analysisFinished: messageTypes = {
+          type: "PRESENT_ANALYSIS",
+          status: "The analysis is finished."
+        };
+
+        chrome.runtime.sendMessage(analysisFinished);
       } catch (error) {
         const failedMessage: messageTypes = {
           type: "RETURN_ANALYZE_FAILED",
