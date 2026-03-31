@@ -26,10 +26,6 @@ import { fetch_video_text_data } from "./get-youtube-content";
         return false;
       }
 
-      /**
-       * This messsage is sent to the background worker.
-       * Found in background.ts.
-       */
       const message: messageTypes = {
         type: "ANALYZE",
         video: video_data

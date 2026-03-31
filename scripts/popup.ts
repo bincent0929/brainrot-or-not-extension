@@ -71,24 +71,33 @@ async function requestAnalysis(): Promise<void> {
 
 function setupRuntimeListener(): void {
   chrome.runtime.onMessage.addListener((message: messageTypes): boolean => {
-    if (message.type === "UPDATE_STATUS") {
-      setStatus(message.status);
-      return false;
+
+    switch (message.type) {
+      
+      case "UPDATE_STATUS":
+        setStatus(message.status);
+        return false;
+      
+      case "RETURN_ANALYZE_FAILED":
+        setLoading(false);
+        setStatus(message.error);
+        return false;
+      
+      case "PRESENT_ANALYSIS":
+        setLoading(false);
+        renderResult(message.analysis_result);
+        return false;
+      
+      case "RETURN_DATA_FETCH_ERROR":
+        setLoading(false);
+        setStatus(message.error);
+        return false;
+      
+      default:
+        return false;
+
     }
 
-    if (message.type === "RETURN_ANALYZE_FAILED") {
-      setLoading(false);
-      setStatus(message.error);
-      return false;
-    }
-
-    if (message.type === "PRESENT_ANALYSIS") {
-      setLoading(false);
-      renderResult(message.analysis_result);
-      return false;
-    }
-
-    return false;
   });
 }
 
