@@ -43,6 +43,10 @@ const LAST_ANALYSIS_STORAGE_KEY = "lastAnalysis";
           analysis_result: video_data,
         };
 
+        /**
+         * This saves the result to the Chromium storage.
+         * I think I need to update it to do a little more.
+         */
         await chrome.storage.local.set({
           [LAST_ANALYSIS_STORAGE_KEY]: {
             ...resultMessage,
