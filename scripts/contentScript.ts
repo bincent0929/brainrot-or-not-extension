@@ -16,7 +16,8 @@ import { fetch_video_text_data } from "./get-youtube-content";
     sendResponse({ accepted: true });
 
     (async () => {
-      const video_data: Video = await fetch_video_text_data();
+      const video_data: Video = 
+        await fetch_video_text_data();
 
       switch (true) {
         
@@ -27,13 +28,22 @@ import { fetch_video_text_data } from "./get-youtube-content";
               "Could not find a transcript for this video. If the creator disabled captions, the transcript cannot be found.",
           });
           return false;
+
+        case (video_data.video_score !== null):
+          // if the video has already been scored
+          const analysisFinished: messageTypes = {
+            type: "PRESENT_ANALYSIS",
+            status: "The analysis is finished.",
+            video_id: video_data.video_id
+          };
+          chrome.runtime.sendMessage(analysisFinished);
           
         default:
-          const message: messageTypes = {
+          const analyzeMessage: messageTypes = {
             type: "ANALYZE",
             video: video_data
           };
-          chrome.runtime.sendMessage(message);
+          chrome.runtime.sendMessage(analyzeMessage);
           
       }
 

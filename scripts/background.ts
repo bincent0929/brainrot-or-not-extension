@@ -21,7 +21,7 @@ import { processTranscript } from "./webgpu-transcript-processing";
           status: "The analysis is finished.",
           video_id: obj.video.video_id
         };
-
+        
         const cachedResult = 
           await chrome.storage.local.get(obj.video.video_id);
         const cachedResultVideo = 
@@ -35,13 +35,6 @@ import { processTranscript } from "./webgpu-transcript-processing";
             const video_data: Video = 
               await processTranscript(obj.video);
 
-            /**
-             * This saves the result to the Chromium storage.
-             * I think I need to update it to do a little more.
-             * I'm not really sure how it's placing it in right now.
-             * 
-             * I also need to have this send to the backend and have it save there.
-             */
             await chrome.storage.local.set({
               [video_data.video_id]: video_data,
             });
