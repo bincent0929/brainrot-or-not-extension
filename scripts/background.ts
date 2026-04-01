@@ -24,7 +24,8 @@ import { processTranscript } from "./webgpu-transcript-processing";
 
         const cachedResult = 
           await chrome.storage.local.get(obj.video.video_id);
-        const cachedResultVideo = cachedResult[obj.video.video_id] as Video | undefined;
+        const cachedResultVideo = 
+          cachedResult[obj.video.video_id] as Video | undefined;
 
         switch (true) {
           case (cachedResultVideo !== undefined 

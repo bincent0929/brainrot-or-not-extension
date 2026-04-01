@@ -1,11 +1,10 @@
+/**
+ * This does exist it's just the tsconfig 
+ * or vite config that's making it think it's not here.
+ */
 import "../styles/popup.css";
 
 import type { messageTypes, Video } from "./types";
-
-/**
- * I'm not really sure what this is right now.
- */
-const LAST_ANALYSIS_STORAGE_KEY = "lastAnalysis";
 
 function setStatus(message: string): void {
   const statusEl = document.getElementById("status");
@@ -26,7 +25,7 @@ function setLoading(isLoading: boolean): void {
   buttonEl.textContent = isLoading ? "Analyzing..." : "Analyze Video";
 }
 
-function renderResult(): void {
+async function renderResult(video_id: string): Promise<void> {
   const resultEl = document.getElementById("result");
   const scoreEl = document.getElementById("score");
   const reasoningEl = document.getElementById("summary");
@@ -37,19 +36,30 @@ function renderResult(): void {
 
   if (!resultEl || !scoreEl || !reasoningEl) return;
 
+  const result = 
+    await chrome.storage.local.get(video_id);
+  const resultVideo = 
+    result[video_id] as Video | undefined;
+
+  if (resultVideo !== undefined 
+    && resultVideo.video_score !== null) {
+    setStatus("The video has not been analyzed.");
+    return;
+  }
+
   /**
    * This needs to be changed to pull from the chrome
    * data storage or the backend.
    */
   resultEl.classList.remove("hidden");
-  scoreEl.textContent = video.video_score.toFixed(1);
-  reasoningEl.textContent = video.score_reasoning;
+  scoreEl.textContent = resultVideo.video_score.toFixed(1);
+  reasoningEl.textContent = resultVideo.score_reasoning;
 
-  const title = video.title || "Current video";
+  const title = resultVideo.title || "Current video";
   setStatus(`Analysis complete for "${title}".`);
 }
 
-async function requestAnalysis(): Promise<void> {
+async function analysisRequest(): Promise<void> {
   setLoading(true);
   setStatus("Collecting transcript and metadata from this tab...");
 
@@ -82,16 +92,18 @@ function setupRuntimeListener(): void {
         setStatus(message.status);
         return false;
       
+      case "PRESENT_ANALYSIS":
+        setLoading(false);
+        (async () => {
+          renderResult(message.video_id);
+        })();
+        return false;
+
       case "RETURN_ANALYZE_FAILED":
         setLoading(false);
         setStatus(message.error);
         return false;
-      
-      case "PRESENT_ANALYSIS":
-        setLoading(false);
-        renderResult();
-        return false;
-      
+
       case "RETURN_DATA_FETCH_ERROR":
         setLoading(false);
         setStatus(message.error);
@@ -105,28 +117,12 @@ function setupRuntimeListener(): void {
   });
 }
 
-/*
-* This needs to be redone. I'm not even sure where the result is even being saved
-* to the Chromium storage.
-async function loadPreviousResult(): Promise<void> {
-  const stored = await chrome.storage.local.get(LAST_ANALYSIS_STORAGE_KEY);
-  const lastAnalysis = stored[LAST_ANALYSIS_STORAGE_KEY] as videoEvalMessage | undefined;
-
-  if (!lastAnalysis?.videoEval) {
-    return;
-  }
-
-  renderResult(lastAnalysis);
-  setStatus("Showing latest completed analysis.");
-}
-*/
-
 document.addEventListener("DOMContentLoaded", async () => {
   const analyzeButton = document.getElementById("analyze-btn");
+  
   analyzeButton?.addEventListener("click", () => {
-    void requestAnalysis();
+    analysisRequest();
   });
 
   setupRuntimeListener();
-  //await loadPreviousResult();
 });
