@@ -74,7 +74,8 @@ type analysisUpdateMessage = {
  */
 type analysisFinishedMessage = {
   type: "PRESENT_ANALYSIS",
-  status: string
+  status: string,
+  video_id: string
 }
 
 /**

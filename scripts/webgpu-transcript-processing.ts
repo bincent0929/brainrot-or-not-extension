@@ -115,7 +115,8 @@ export async function processTranscript(video: Video): Promise<Video> {
 
   Object.assign(video, {
     video_score: modelResponse.video_score, 
-    score_reasoning: modelResponse.score_reasoning
+    score_reasoning: modelResponse.score_reasoning,
+    scored_at: Date.now()
   });
 
   return video;
