@@ -31,7 +31,7 @@ import { fetch_video_text_data } from "./get-youtube-content";
           });
           return false;
 
-        case (video_data.video_score !== null):
+        case video_data.video_score !== null:
           // if the video has already been scored
           const analysisFinished: messageTypes = {
             type: "PRESENT_ANALYSIS",

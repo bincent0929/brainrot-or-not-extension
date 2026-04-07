@@ -5,7 +5,7 @@
 
 import { ChatWebLLM } from "@langchain/community/chat_models/webllm";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-//import { InitProgressReport } from "@mlc-ai/web-llm";
+import type { InitProgressReport } from "@mlc-ai/web-llm";
 
 import type { Video, modelResponse } from "./types";
 
@@ -39,11 +39,9 @@ async function modelLoad(model_name: string): Promise<ChatWebLLM> {
         },
       });
 
-      /*
       await model.initialize((progress: InitProgressReport) => {
         console.log(progress);
       });
-      */
 
       return model;
     })();
@@ -75,49 +73,59 @@ function parseModelJson(content: string): modelResponse {
   };
 }
 
-export async function processTranscript(video: Video): Promise<Video> {
-  Object.assign(video, {
-    prompt_used: prePrompt, 
-    model_used: "Llama-3.2-1B-Instruct-q4f16_1-MLC", 
-    trained: false
-  });
+export async function processTranscript(video: Video): Promise<Video> | undefined {
+  try {
+    Object.assign(video, {
+      prompt_used: prePrompt, 
+      model_used: "Llama-3.2-1B-Instruct-q4f16_1-MLC", 
+      trained: false
+    });
 
-  const loadedModel = await modelLoad(video.model_used);
+    const loadedModel = await modelLoad(video.model_used);
 
-  const promptPayload = [
-    `Video title: ${video.title}`,
-    `Channel: ${video.channel_name}`,
-    "Transcript:", video.transcript,
-  ].join("\n");
+    const promptPayload = [
+      `Video title: ${video.title}`,
+      `Channel: ${video.channel_name}`,
+      "Transcript:", video.transcript,
+    ].join("\n");
 
-  /**
-   * The SystemMessage is how the model is
-   * supposed to respond to any given input.
-   * The HumanMessage is whatever input is given
-   * that the model should respond to.
-   */
-  const response = await loadedModel.invoke([
-    new SystemMessage({
-      content: prePrompt,
-    }),
-    new HumanMessage({ content: promptPayload }),
-  ]);
+    console.log("Test");
+    /**
+     * The SystemMessage is how the model is
+     * supposed to respond to any given input.
+     * The HumanMessage is whatever input is given
+     * that the model should respond to.
+     */
+    const response = await loadedModel.invoke([
+      new SystemMessage({
+        content: prePrompt,
+      }),
+      new HumanMessage({ content: promptPayload }),
+    ]);
 
-  if (!response) {
-    throw new Error("The inference crashed.");
+    if (!response) {
+      throw new Error("The inference crashed.");
+    }
+
+    const contentStr =
+      typeof response.content === "string"
+        ? response.content
+        : (response.content as { text: string }[])[0]?.text ?? "";
+    const modelResponse: modelResponse = parseModelJson(contentStr);
+
+    Object.assign(video, {
+      video_score: modelResponse.video_score,
+      score_reasoning: modelResponse.score_reasoning,
+      scored_at: new Date().toISOString()
+    });
+
+    if (video.video_score === null || video.score_reasoning === null || video.scored_at === null) {
+      throw new Error("Video scoring fields were not properly assigned.");
+    }
+
+    return video;
   }
-
-  const contentStr =
-    typeof response.content === "string"
-      ? response.content
-      : (response.content as { text: string }[])[0]?.text ?? "";
-  const modelResponse: modelResponse = parseModelJson(contentStr);
-
-  Object.assign(video, {
-    video_score: modelResponse.video_score, 
-    score_reasoning: modelResponse.score_reasoning,
-    scored_at: Date.now()
-  });
-
-  return video;
+  catch {
+    return undefined;
+  }
 }

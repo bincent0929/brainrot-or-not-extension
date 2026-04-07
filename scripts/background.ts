@@ -32,8 +32,12 @@ import { processTranscript } from "./webgpu-transcript-processing";
             && cachedResultVideo.video_score !== null):
             break;
           default:
-            const video_data: Video = 
+            const video_data: Video | undefined =
               await processTranscript(obj.video);
+
+            if (!video_data) {
+              throw new Error("The video was not able to be scored.")
+            }
 
             await chrome.storage.local.set({
               [video_data.video_id]: video_data,
