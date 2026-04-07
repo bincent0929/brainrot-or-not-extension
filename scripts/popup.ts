@@ -41,8 +41,8 @@ async function renderResult(video_id: string): Promise<void> {
   const resultVideo = 
     result[video_id] as Video | undefined;
 
-  if (resultVideo !== undefined 
-    && resultVideo.video_score !== null) {
+  if (resultVideo === undefined 
+    && resultVideo.video_score === null) {
     setStatus("The video has not been analyzed.");
     return;
   }

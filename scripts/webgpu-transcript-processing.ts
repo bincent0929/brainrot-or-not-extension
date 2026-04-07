@@ -55,7 +55,7 @@ const prePrompt =
   "If it is educational, practical, or high-signal, score it higher. " +
   "If it is mostly entertainment, score it lower. " +
   "Use a 0.0 to 5.0 scale where 0.0 is pure entertainment/brainrot and 5.0 is deeply educational/productive. " +
-  'Respond ONLY with JSON in this exact format: {"score": <float>, "summary": "<1-2 sentence summary>"';
+  'Respond ONLY with JSON in this exact format: {"video_score": <float>, "score_reasoning": "<1-2 sentence summary>"}';
 
 function parseModelJson(content: string): modelResponse {
   const start = content.indexOf("{");
@@ -89,7 +89,6 @@ export async function processTranscript(video: Video): Promise<Video> | undefine
       "Transcript:", video.transcript,
     ].join("\n");
 
-    console.log("Test");
     /**
      * The SystemMessage is how the model is
      * supposed to respond to any given input.
@@ -119,7 +118,7 @@ export async function processTranscript(video: Video): Promise<Video> | undefine
       scored_at: new Date().toISOString()
     });
 
-    if (video.video_score === null || video.score_reasoning === null || video.scored_at === null) {
+    if (video.video_score == null || video.score_reasoning == null || video.scored_at == null) {
       throw new Error("Video scoring fields were not properly assigned.");
     }
 
