@@ -21,11 +21,13 @@ import { fetch_video_text_data } from "./get-youtube-content";
 
       switch (true) {
         
-        case !video_data.transcript:
+        case !video_data:
           chrome.runtime.sendMessage({
             type: "RETURN_DATA_FETCH_ERROR",
             error:
-              "Could not find a transcript for this video. If the creator disabled captions, the transcript cannot be found.",
+              "Could not find a transcript for this video." + 
+              "If the creator disabled captions, the transcript cannot be found." +
+              "Or the backend my not being running!!",
           });
           return false;
 
