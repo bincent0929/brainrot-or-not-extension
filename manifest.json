@@ -26,6 +26,11 @@
       "matches": ["https://*.youtube.com/*"]
     }
   ],
+  "icons": {
+    "16": "assets/ext-icon.png",
+    "48": "assets/ext-icon.png",
+    "128": "assets/ext-icon.png"
+  },
   "action": {
     "default_icon": {
       "16": "assets/ext-icon.png",
