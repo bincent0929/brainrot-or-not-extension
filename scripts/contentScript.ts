@@ -25,9 +25,10 @@ import { fetch_video_text_data } from "./get-youtube-content";
           chrome.runtime.sendMessage({
             type: "RETURN_DATA_FETCH_ERROR",
             error:
-              "Could not find a transcript for this video." + 
-              "If the creator disabled captions, the transcript cannot be found." +
-              "Or the backend my not being running!!",
+              "Could not find a transcript for this video. " + 
+              "This may be because the creator disabled captions. " +
+              "Or there may be a problem with our servers. " +
+              "Please try again later.",
           });
           return false;
 
