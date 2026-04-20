@@ -9,7 +9,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "bundler",
-    "types": ["chrome-types"],
+    "types": ["chrome-types", "vite/client"],
     "resolveJsonModule": true,
     "noEmit": true
   },

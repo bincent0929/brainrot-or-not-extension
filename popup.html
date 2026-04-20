@@ -7,19 +7,23 @@
     <script type="module" src="/scripts/popup.ts"></script>
   </head>
   <body>
-    <main class="popup">
-      <h1 class="title">Brainrot Or Not</h1>
-      <p id="status" class="status">Ready to analyze the current YouTube video.</p>
-      <button id="analyze-btn" class="analyze-btn" type="button">Analyze Video</button>
+    <main class="w-80 min-h-[260px] p-4 flex flex-col gap-3">
+      <h1 class="m-0 text-lg font-bold text-slate-900">Brainrot Or Not</h1>
+      <p id="status" class="m-0 text-[13px] leading-[1.4] text-slate-700">Ready to analyze the current YouTube video.</p>
+      <button
+        id="analyze-btn"
+        type="button"
+        class="border-0 rounded-[10px] bg-gradient-to-br from-sky-500 to-blue-600 text-white text-sm font-bold py-[10px] px-[14px] cursor-pointer disabled:opacity-[0.65] disabled:cursor-not-allowed"
+      >Analyze Video</button>
 
-      <section id="result" class="result hidden" aria-live="polite">
-        <div class="metric-row">
-          <span class="metric-label">Score</span>
-          <span id="score" class="metric-value">-</span>
+      <section id="result" class="rounded-[10px] border border-slate-300 bg-white p-3 flex flex-col gap-[10px] hidden" aria-live="polite">
+        <div class="flex items-center justify-between gap-[10px]">
+          <span class="text-xs text-slate-500 uppercase tracking-[0.03em]">Score</span>
+          <span id="score" class="text-2xl font-extrabold text-slate-900">-</span>
         </div>
-        <div class="metric-row column">
-          <span class="metric-label">Summary</span>
-          <p id="summary" class="summary"></p>
+        <div class="flex flex-col items-start gap-[10px]">
+          <span class="text-xs text-slate-500 uppercase tracking-[0.03em]">Summary</span>
+          <p id="summary" class="m-0 text-[13px] leading-[1.45] text-slate-800"></p>
         </div>
       </section>
     </main>

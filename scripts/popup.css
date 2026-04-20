@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    font-family: "Avenir Next", "Segoe UI", sans-serif;
+  }
+  body {
+    background: #f5f7fa;
+    color: #1a202c;
+  }
+}

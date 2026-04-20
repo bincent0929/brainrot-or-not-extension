@@ -2,7 +2,7 @@
  * This does exist it's just the tsconfig 
  * or vite config that's making it think it's not here.
  */
-import "../styles/popup.css";
+import "./popup.css";
 
 import type { messageTypes, Video } from "./types";
 
