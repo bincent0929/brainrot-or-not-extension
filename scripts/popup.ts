@@ -1,7 +1,3 @@
-/**
- * This does exist it's just the tsconfig 
- * or vite config that's making it think it's not here.
- */
 import "./popup.css";
 
 import type { messageTypes, Video } from "./types";
@@ -47,15 +43,16 @@ async function renderResult(video_id: string): Promise<void> {
     return;
   }
 
-  /**
-   * This needs to be changed to pull from the chrome
-   * data storage or the backend.
-   */
   resultEl.classList.remove("hidden");
   scoreEl.textContent = resultVideo.video_score.toFixed(1);
   reasoningEl.textContent = resultVideo.score_reasoning;
 
   const title = resultVideo.title || "Current video";
+  /**
+   * I want to have the status hidden here instead of updated
+   * I also want the Analyze button hidden and to have an x
+   * to remove it and take you back to the analyze page.
+   */
   setStatus(`Analysis complete for "${title}".`);
 }
 
