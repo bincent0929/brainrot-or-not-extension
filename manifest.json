@@ -17,13 +17,8 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "assets/bookmark.png",
-        "assets/play.png",
-        "assets/delete.png",
-        "assets/save.png"
-      ],
-      "matches": ["https://*.youtube.com/*"]
+      "matches": ["https://*.youtube.com/*"],
+      "resources": []
     }
   ],
   "icons": {
