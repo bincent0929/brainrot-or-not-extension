@@ -35,5 +35,5 @@ chrome.runtime.onMessage.addListener((message: offscreenMessageTypes): boolean =
     }
   })();
 
-  return true;
+  return false;
 });
