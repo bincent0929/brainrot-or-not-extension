@@ -13,6 +13,11 @@ export default defineConfig({
   publicDir: false,
   plugins: [tailwindcss(), crx({ manifest })],
   build: {
+    rollupOptions: {
+      input: {
+        offscreen: fileURLToPath(new URL("../offscreen.html", import.meta.url)),
+      },
+    },
     outDir: fileURLToPath(new URL("../dist", import.meta.url)),
     emptyOutDir: true,
     chunkSizeWarningLimit: 7000,

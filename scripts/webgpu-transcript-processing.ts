@@ -77,7 +77,7 @@ export async function processTranscript(video: Video): Promise<Video> | undefine
   try {
     Object.assign(video, {
       prompt_used: prePrompt, 
-      model_used: "Llama-3.2-1B-Instruct-q4f16_1-MLC", 
+      model_used: "Qwen3-4B-q4f16_1-MLC", 
       trained: false
     });
 

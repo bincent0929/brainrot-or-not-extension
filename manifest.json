@@ -2,7 +2,7 @@
   "name": "Brainrot Or Not",
   "version": "0.1.0",
   "description": "Analyzes a YouTube video's transcript and reports a score and summary.",
-  "permissions": ["tabs", "storage"],
+  "permissions": ["tabs", "storage", "offscreen"],
   "host_permissions": ["https://*.youtube.com/*"],
   "background": {
     "service_worker": "scripts/background.ts",

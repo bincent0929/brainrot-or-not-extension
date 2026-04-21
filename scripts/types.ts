@@ -30,6 +30,33 @@ export type messageTypes =
   | dataFetchError;
 
 /**
+ * Messages used exclusively between the background service worker
+ * and the offscreen document for WebGPU inference.
+ */
+export type offscreenMessageTypes =
+  | offscreenAnalyzeMessage
+  | offscreenResultMessage
+  | offscreenErrorMessage;
+
+type offscreenAnalyzeMessage = {
+  type: "OFFSCREEN_ANALYZE";
+  target: "offscreen";
+  video: Video;
+};
+
+type offscreenResultMessage = {
+  type: "OFFSCREEN_RESULT";
+  target: "background";
+  video: Video;
+};
+
+type offscreenErrorMessage = {
+  type: "OFFSCREEN_ERROR";
+  target: "background";
+  error: string;
+};
+
+/**
  * Sent: by popup.ts when the user clicks analysis button.
  * Received: by contentScript.ts. Tells it to get the video ID from the page.
  */
