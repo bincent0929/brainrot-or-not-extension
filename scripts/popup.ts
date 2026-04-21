@@ -25,12 +25,14 @@ async function renderResult(video_id: string): Promise<void> {
   const resultEl = document.getElementById("result");
   const scoreEl = document.getElementById("score");
   const reasoningEl = document.getElementById("summary");
+  const statusEl = document.getElementById("status");
+  const buttonEl = document.getElementById("analyze-btn") as HTMLButtonElement | null;
 
   if (!resultEl) setStatus("Result element not found.");
   if (!scoreEl) setStatus("Score element not found.");
   if (!reasoningEl) setStatus("Reasoning element not found.");
 
-  if (!resultEl || !scoreEl || !reasoningEl) return;
+  if (!resultEl || !scoreEl || !reasoningEl || !statusEl || !buttonEl) return;
 
   const result = 
     await chrome.storage.local.get(video_id);
@@ -43,17 +45,11 @@ async function renderResult(video_id: string): Promise<void> {
     return;
   }
 
+  statusEl.classList.add("hidden");
+  buttonEl.classList.add("hidden");
   resultEl.classList.remove("hidden");
   scoreEl.textContent = resultVideo.video_score.toFixed(1);
   reasoningEl.textContent = resultVideo.score_reasoning;
-
-  const title = resultVideo.title || "Current video";
-  /**
-   * I want to have the status hidden here instead of updated
-   * I also want the Analyze button hidden and to have an x
-   * to remove it and take you back to the analyze page.
-   */
-  setStatus(`Analysis complete for "${title}".`);
 }
 
 async function analysisRequest(): Promise<void> {
@@ -114,11 +110,27 @@ function setupRuntimeListener(): void {
   });
 }
 
+function resetToAnalyzeScreen(): void {
+  const resultEl = document.getElementById("result");
+  const statusEl = document.getElementById("status");
+  setStatus("Click the button to analyze the video!");
+  const buttonEl = document.getElementById("analyze-btn");
+
+  resultEl?.classList.add("hidden");
+  statusEl?.classList.remove("hidden");
+  buttonEl?.classList.remove("hidden");
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const analyzeButton = document.getElementById("analyze-btn");
-  
+  const closeButton = document.getElementById("close-result-btn");
+
   analyzeButton?.addEventListener("click", () => {
     analysisRequest();
+  });
+
+  closeButton?.addEventListener("click", () => {
+    resetToAnalyzeScreen();
   });
 
   setupRuntimeListener();
