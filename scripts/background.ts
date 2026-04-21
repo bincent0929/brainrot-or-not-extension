@@ -83,6 +83,6 @@ function analyzeInOffscreen(video: Video): Promise<Video> {
       }
     })();
 
-    return true;
+    return false;
   });
 })();
