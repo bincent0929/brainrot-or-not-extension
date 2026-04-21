@@ -51,11 +51,14 @@ async function modelLoad(model_name: string): Promise<ChatWebLLM> {
 }
 
 const prePrompt =
-  "You evaluate whether a YouTube video is worth the viewer's time. " +
-  "If it is educational, practical, or high-signal, score it higher. " +
-  "If it is mostly entertainment, score it lower. " +
-  "Use a 0.0 to 5.0 scale where 0.0 is pure entertainment/brainrot and 5.0 is deeply educational/productive. " +
-  'Respond ONLY with JSON in this exact format: {"video_score": <float>, "score_reasoning": "<1-2 sentence summary>"}';
+  "You judge YouTube video. Worth viewer time? " +
+  "Educational, practical, tutorial, informational, news → score high. " +
+  "Entertainment, reality tv, gaming, reaction, drama → score low. " +
+  "Scale 0.0 to 5.0. 0.0 = pure brainrot. 5.0 = learning/productive. " +
+  "score_reasoning rules: max 15 words. Standard English, full sentence. " +
+  "Justify score only. Name signal type (tutorial/drama/etc) + why high/low value. " +
+  "No plot summary. No opinion on content quality. " +
+  'Reply ONLY JSON, exact format: {"video_score": <float>, "score_reasoning": "<standard English, ≤15 words>"}';
 
 function parseModelJson(content: string): modelResponse {
   const start = content.indexOf("{");
