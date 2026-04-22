@@ -9,6 +9,8 @@ import type { InitProgressReport } from "@mlc-ai/web-llm";
 
 import type { Video, modelResponse } from "./types";
 
+const maxTokens = 4096;
+
 /**
  * This is defined here to avoid loading
  * the model multiple times.
@@ -35,7 +37,7 @@ async function modelLoad(model_name: string): Promise<ChatWebLLM> {
            * matter when the model is ran.
            */
           temperature: 0.1,
-          context_window_size: 10000,
+          context_window_size: maxTokens,
         },
       });
 
@@ -56,7 +58,7 @@ const prePrompt =
   "Entertainment, reality tv, gaming, reaction, drama → score low. " +
   "Scale 0.0 to 5.0. 0.0 = pure brainrot. 5.0 = learning/productive. " +
   "score_reasoning rules: max 15 words. Standard English, full sentence. " +
-  "Justify score only. Name signal type (tutorial/drama/etc) + why high/low value. " +
+  "Justify score only. Name signal type (tutorial/drama/etc) + why high/low value. + make it humorous " +
   "No plot summary. No opinion on content quality. " +
   'Reply ONLY JSON, exact format: {"video_score": <float>, "score_reasoning": "<standard English, ≤15 words>"}';
 
@@ -76,20 +78,49 @@ function parseModelJson(content: string): modelResponse {
   };
 }
 
+async function transcriptTokenManagement(video: Video, loadedModel: ChatWebLLM): Promise<string> {
+  const restPayload = [
+    `Video title: ${video.title}`,
+    `Channel: ${video.channel_name}`,
+    `${prePrompt}`
+  ].join("\n");
+  
+  const transcriptPayload = [
+    `Transcript: ${video.transcript}`
+  ].join("\n");
+
+  const restTokenCount = await loadedModel.getNumTokens(restPayload);
+  const transcriptTokenCount = await loadedModel.getNumTokens(transcriptPayload);
+  
+  const charsPerToken = transcriptPayload.length / transcriptTokenCount;
+  let excessTokens = restTokenCount + transcriptTokenCount - maxTokens;
+  let truncatedTranscript;
+  while(excessTokens <= 0) {
+    // 1.05 accounts for "non-linear token boundaries"
+    const charToRemove = Math.ceil(excessTokens * charsPerToken * 1.05);
+    truncatedTranscript = transcriptPayload.slice(0, transcriptPayload.length - charToRemove);
+    excessTokens = restTokenCount + await loadedModel.getNumTokens(truncatedTranscript) - maxTokens;
+  }
+
+  return truncatedTranscript;
+}
+
 export async function processTranscript(video: Video): Promise<Video> | undefined {
   try {
     Object.assign(video, {
       prompt_used: prePrompt, 
-      model_used: "Qwen3-1.7B-q4f32_1-MLC", 
+      model_used: "gemma-2-2b-it-q4f32_1-MLC", 
       trained: false
     });
 
     const loadedModel = await modelLoad(video.model_used);
 
+    const transcript = await transcriptTokenManagement(video, loadedModel);
+
     const promptPayload = [
       `Video title: ${video.title}`,
       `Channel: ${video.channel_name}`,
-      "Transcript:", video.transcript,
+      "Transcript:", transcript,
     ].join("\n");
 
     /**
