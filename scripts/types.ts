@@ -13,8 +13,17 @@ export type Video = {
   prompt_used: string | null;
 };
 
-export type modelResponse = 
+export type modelResponse =
   Pick<Video, "video_score" | "score_reasoning">;
+
+/**
+ * Stored in chrome.storage.session to track analysis state across popup open/close.
+ * Background writes it; popup reads it to restore UI on reopen.
+ */
+export type AnalysisStatus =
+  | { videoId: string; phase: "analyzing" }
+  | { videoId: string; phase: "done" }
+  | { videoId: string; phase: "failed"; error: string };
 
 /**
  * The types of the messages should be what should be done to the

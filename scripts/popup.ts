@@ -1,20 +1,20 @@
 import "./popup.css";
 
-import type { messageTypes, Video } from "./types";
+import type { AnalysisStatus, messageTypes, Video } from "./types";
 
 function setStatus(message: string): void {
   const statusEl = document.getElementById("status");
-  
+
   if (!statusEl) setStatus("Status element not found.");
 
-  if (statusEl) { 
+  if (statusEl) {
     statusEl.textContent = message;
   }
 }
 
 function setLoading(isLoading: boolean): void {
   const buttonEl = document.getElementById("analyze-btn") as HTMLButtonElement | null;
-  
+
   if (!buttonEl) setStatus("The button element was not found.");
 
   buttonEl.disabled = isLoading;
@@ -34,13 +34,10 @@ async function renderResult(video_id: string): Promise<void> {
 
   if (!resultEl || !scoreEl || !reasoningEl || !statusEl || !buttonEl) return;
 
-  const result = 
-    await chrome.storage.local.get(video_id);
-  const resultVideo = 
-    result[video_id] as Video | undefined;
+  const result = await chrome.storage.local.get(video_id);
+  const resultVideo = result[video_id] as Video | undefined;
 
-  if (resultVideo === undefined 
-    && resultVideo.video_score === null) {
+  if (resultVideo === undefined || resultVideo.video_score === null) {
     setStatus("The video has not been analyzed.");
     return;
   }
@@ -80,11 +77,11 @@ function setupRuntimeListener(): void {
   chrome.runtime.onMessage.addListener((message: messageTypes): boolean => {
 
     switch (message.type) {
-      
+
       case "UPDATE_STATUS":
         setStatus(message.status);
         return false;
-      
+
       case "PRESENT_ANALYSIS":
         setLoading(false);
         (async () => {
@@ -101,13 +98,37 @@ function setupRuntimeListener(): void {
         setLoading(false);
         setStatus(message.error);
         return false;
-      
+
       default:
         return false;
 
     }
 
   });
+}
+
+/**
+ * Reads chrome.storage.session to restore UI if the popup was closed mid-analysis.
+ * The background SW writes analysisStatus whenever the state changes.
+ */
+async function restoreStateFromSession(): Promise<void> {
+  const session = await chrome.storage.session.get("analysisStatus");
+  const status = session.analysisStatus as AnalysisStatus | undefined;
+  if (!status) return;
+
+  switch (status.phase) {
+    case "analyzing":
+      setLoading(true);
+      setStatus("Analyzing the video...");
+      break;
+    case "done":
+      await renderResult(status.videoId);
+      break;
+    case "failed":
+      setLoading(false);
+      setStatus(status.error);
+      break;
+  }
 }
 
 function resetToAnalyzeScreen(): void {
@@ -134,4 +155,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   setupRuntimeListener();
+
+  // Restore UI from session in case the popup was closed mid-analysis.
+  await restoreStateFromSession();
+
+  // Also watch session storage for live status changes. This catches the case where
+  // the popup is open but missed a PRESENT_ANALYSIS message (e.g. popup was
+  // re-opening just as the result came in).
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== "session" || !("analysisStatus" in changes)) return;
+    const status = changes.analysisStatus.newValue as AnalysisStatus | undefined;
+    if (!status) return;
+
+    switch (status.phase) {
+      case "done":
+        setLoading(false);
+        renderResult(status.videoId);
+        break;
+      case "failed":
+        setLoading(false);
+        setStatus(status.error);
+        break;
+    }
+  });
 });

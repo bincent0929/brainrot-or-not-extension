@@ -30,12 +30,6 @@ async function modelLoad(model_name: string): Promise<ChatWebLLM> {
       const model = new ChatWebLLM({
         model: model_name,
         chatOptions: {
-          /**
-           * temperature is the most important.
-           * It's supposed to keep the 
-           * response consistent no
-           * matter when the model is ran.
-           */
           temperature: 0.1,
           context_window_size: maxTokens,
         },
@@ -53,14 +47,13 @@ async function modelLoad(model_name: string): Promise<ChatWebLLM> {
 }
 
 const prePrompt =
-  "You judge YouTube video. Worth viewer time? " +
+  "You judge YouTube videos. Is it worth the viewer's time? " +
   "Educational, practical, tutorial, informational, news → score high. " +
   "Entertainment, reality tv, gaming, reaction, drama → score low. " +
   "Scale 0.0 to 5.0. 0.0 = pure brainrot. 5.0 = learning/productive. " +
-  "score_reasoning rules: max 15 words. Standard English, full sentence. " +
-  "Justify score only. Name signal type (tutorial/drama/etc) + why high/low value. + make it humorous " +
+  "score_reasoning: one sentence, maximum 12 words. Name the signal type and whether value is high or low. " +
   "No plot summary. No opinion on content quality. " +
-  'Reply ONLY JSON, exact format: {"video_score": <float>, "score_reasoning": "<standard English, ≤15 words>"}';
+  'Reply ONLY as JSON: {"video_score": <float 0.0-5.0>, "score_reasoning": "<12 words max>"}';
 
 function parseModelJson(content: string): modelResponse {
   const start = content.indexOf("{");
@@ -70,11 +63,16 @@ function parseModelJson(content: string): modelResponse {
     throw new Error("Model response did not contain a JSON object.");
   }
 
-  const parsed = JSON.parse(content.slice(start, end + 1)) as modelResponse;
+  const parsed = JSON.parse(content.slice(start, end + 1)) as Record<string, unknown>;
+  const score = parseFloat(String(parsed.video_score));
+
+  if (isNaN(score)) {
+    throw new Error("Model did not return a valid numeric video_score.");
+  }
 
   return {
-    video_score: parsed.video_score,
-    score_reasoning: parsed.score_reasoning
+    video_score: score,
+    score_reasoning: String(parsed.score_reasoning ?? "")
   };
 }
 
@@ -127,12 +125,19 @@ export async function processTranscript(video: Video): Promise<Video> | undefine
      * The HumanMessage is whatever input is given
      * that the model should respond to.
      */
-    const response = await loadedModel.invoke([
-      new SystemMessage({
-        content: prePrompt,
-      }),
-      new HumanMessage({ content: promptPayload }),
-    ]);
+    const response = await loadedModel.invoke(
+      [
+        new SystemMessage({ content: prePrompt }),
+        new HumanMessage({ content: promptPayload }),
+      ],
+      {
+        callbacks: [{
+          handleLLMNewToken(token: string) {
+            console.log(token);
+          },
+        }],
+      }
+    );
 
     if (!response) {
       throw new Error("The inference crashed.");
