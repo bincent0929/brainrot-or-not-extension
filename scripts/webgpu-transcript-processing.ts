@@ -85,24 +85,22 @@ async function transcriptTokenManagement(video: Video, loadedModel: ChatWebLLM):
     `${prePrompt}`
   ].join("\n");
   
-  const transcriptPayload = [
-    `Transcript: ${video.transcript}`
-  ].join("\n");
-
   const restTokenCount = await loadedModel.getNumTokens(restPayload);
-  const transcriptTokenCount = await loadedModel.getNumTokens(transcriptPayload);
-  
-  const charsPerToken = transcriptPayload.length / transcriptTokenCount;
+  let transcript = video.transcript;
+  let transcriptTokenCount = await loadedModel.getNumTokens(`Transcript: ${transcript}`);
+
+  const charsPerToken = transcript.length / transcriptTokenCount;
   let excessTokens = restTokenCount + transcriptTokenCount - maxTokens;
-  let truncatedTranscript;
-  while(excessTokens <= 0) {
-    // 1.05 accounts for "non-linear token boundaries"
-    const charToRemove = Math.ceil(excessTokens * charsPerToken * 1.05);
-    truncatedTranscript = transcriptPayload.slice(0, transcriptPayload.length - charToRemove);
-    excessTokens = restTokenCount + await loadedModel.getNumTokens(truncatedTranscript) - maxTokens;
+
+  while (excessTokens > 0) {
+    // 1.05 accounts for non-linear token boundaries
+    const charsToRemove = Math.ceil(excessTokens * charsPerToken * 1.05);
+    transcript = transcript.slice(0, transcript.length - charsToRemove);
+    transcriptTokenCount = await loadedModel.getNumTokens(`Transcript: ${transcript}`);
+    excessTokens = restTokenCount + transcriptTokenCount - maxTokens;
   }
 
-  return truncatedTranscript;
+  return transcript;
 }
 
 export async function processTranscript(video: Video): Promise<Video> | undefined {
