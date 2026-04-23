@@ -10,6 +10,7 @@ import type { InitProgressReport } from "@mlc-ai/web-llm";
 import type { Video, modelResponse } from "./types";
 
 const maxTokens = 4096;
+const outputTokenBudget = 300;
 
 /**
  * This is defined here to avoid loading
@@ -47,13 +48,17 @@ async function modelLoad(model_name: string): Promise<ChatWebLLM> {
 }
 
 const prePrompt =
-  "You judge YouTube videos. Is it worth the viewer's time? " +
-  "Educational, practical, tutorial, informational, news → score high. " +
-  "Entertainment, reality tv, gaming, reaction, drama → score low. " +
-  "Scale 0.0 to 5.0. 0.0 = pure brainrot. 5.0 = learning/productive. " +
-  "score_reasoning: one sentence, maximum 12 words. Name the signal type and whether value is high or low. " +
-  "No plot summary. No opinion on content quality. " +
-  'Reply ONLY as JSON: {"video_score": <float 0.0-5.0>, "score_reasoning": "<12 words max>"}';
+  "You classify YouTube videos for time-value. " +
+  "Pick exactly ONE category from: educational, tutorial, informational, news, entertainment, gaming, reaction, drama, mixed. " +
+  "Score 0.0 (pure brainrot) to 5.0 (high value), bound to category: " +
+  "educational/tutorial/informational/news → 3.5-5.0. " +
+  "entertainment/gaming/reaction/drama → 0.0-2.0. " +
+  "mixed → 2.0-3.5. " +
+  "score_reasoning format: '<category>, <high|low> <signal>'. Max 12 words. " +
+  'Reply ONLY as JSON: {"video_score": <float>, "category": "<one>", "score_reasoning": "<string>"}. ' +
+  'Example: {"video_score": 4.2, "category": "tutorial", "score_reasoning": "tutorial, high information density"}. ' +
+  'Example: {"video_score": 1.0, "category": "reaction", "score_reasoning": "reaction, low informational value"}. ' +
+  "Context: brain rot refers to material of low or addictive quality, typically in online media, that preoccupies someone to the point it is said to affect mental functioning. Both the state of preoccupation and resulting mental degradation are known as brain rot.";
 
 function parseModelJson(content: string): modelResponse {
   const start = content.indexOf("{");
@@ -77,6 +82,8 @@ function parseModelJson(content: string): modelResponse {
 }
 
 async function transcriptTokenManagement(video: Video, loadedModel: ChatWebLLM): Promise<string> {
+  const maxInputTokens = maxTokens - outputTokenBudget;
+
   const restPayload = [
     `Video title: ${video.title}`,
     `Channel: ${video.channel_name}`,
@@ -88,14 +95,14 @@ async function transcriptTokenManagement(video: Video, loadedModel: ChatWebLLM):
   let transcriptTokenCount = await loadedModel.getNumTokens(`Transcript: ${transcript}`);
 
   const charsPerToken = transcript.length / transcriptTokenCount;
-  let excessTokens = restTokenCount + transcriptTokenCount - maxTokens;
+  let excessTokens = restTokenCount + transcriptTokenCount - maxInputTokens;
 
   while (excessTokens > 0) {
     // 1.05 accounts for non-linear token boundaries
     const charsToRemove = Math.ceil(excessTokens * charsPerToken * 1.05);
     transcript = transcript.slice(0, transcript.length - charsToRemove);
     transcriptTokenCount = await loadedModel.getNumTokens(`Transcript: ${transcript}`);
-    excessTokens = restTokenCount + transcriptTokenCount - maxTokens;
+    excessTokens = restTokenCount + transcriptTokenCount - maxInputTokens;
   }
 
   return transcript;
