@@ -25,8 +25,10 @@ To get the extension up and running you will first want to download its packages
 `uv pip install -r requirements.txt`
 #### Javascript Packages
 `cd scripts/ && pnpm install`
-### Building
+### Building the extension
 `cd scripts/ && pnpm build`
+### Starting the backend server
+`cd ytbackend && python3 manage.py runserver 8080`
 
 This will compile everything together using [CRXJS](https://crxjs.dev/) and [Vite](https://vite.dev/) into `dist/` in the root of the repository.
 
