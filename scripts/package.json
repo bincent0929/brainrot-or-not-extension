@@ -8,6 +8,7 @@
   "dependencies": {
     "@langchain/community": "^1.1.17",
     "@langchain/core": "^1.1.27",
+    "@langchain/deepseek": "^1.0.26",
     "@mlc-ai/web-llm": "^0.2.81",
     "chrome-types": "^0.1.415",
     "langchain": "^1.2.25",

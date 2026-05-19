@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import type { messageTypes, Video, AnalysisStatus } from "../types";
 
+import { SettingsPanel } from "./SettingsPanel";
+
 export function PopupApp() {
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState("Click the button to analyze the video!");
     const [result, setResult] = useState<{ score: number; reasoning: string } | null>(null);
+    const [showSettings, setShowSettings] = useState(false);
 
     async function fetchVideo(video_id: string) {
         const storedVideo = await chrome.storage.local.get(video_id);
@@ -110,9 +113,13 @@ export function PopupApp() {
         return () => chrome.storage.onChanged.removeListener(onChange);
     }, []);
 
+    if (showSettings) {
+        return <SettingsPanel onClose={() => setShowSettings(false)} />;
+    }
     return (
         <main className="w-55 p-4 flex flex-col gap-3">
             <div className="flex items-center gap-2">
+                <button type="button" className="ml-auto" onClick={() => setShowSettings(true)}>⚙</button>
                 <img src="assets/ext-icon.png" className="h-7 w-7"/>
                 <h1 className="m-0 text-lg font-bold"><span className="text-red-600">Brainrot</span> Or <span className="text-green-400">Not</span></h1>
             </div>
