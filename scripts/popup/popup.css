@@ -9,3 +9,12 @@
     color: #FFFF;
   }
 }
+
+@layer components {
+  .btn-primary-red {
+    @apply border-0 rounded-[10px] text-white text-sm font-bold py-1 px-4 cursor-pointer bg-red-600 hover:bg-red-700;
+  }
+  .btn-primary-green {
+    @apply border-0 rounded-[10px] text-white text-sm font-bold py-1 px-4 cursor-pointer bg-green-500 hover:bg-green-600;
+  }
+}
