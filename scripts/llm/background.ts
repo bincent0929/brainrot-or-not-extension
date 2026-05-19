@@ -30,7 +30,7 @@ chrome.runtime.onMessage.addListener((message: messageTypes | offscreenMessageTy
     if (message.type === "OFFSCREEN_RESULT") {
       await chrome.storage.local.set({ [message.video.video_id]: message.video });
       await chrome.storage.session.set({
-        analysisStatus: { videoId: message.video.video_id, phase: "done" } satisfies AnalysisStatus,
+        analysisStatus: { video_id: message.video.video_id, phase: "done" } satisfies AnalysisStatus,
       });
       chrome.runtime.sendMessage({
         type: "PRESENT_ANALYSIS",
@@ -44,7 +44,7 @@ chrome.runtime.onMessage.addListener((message: messageTypes | offscreenMessageTy
     const status = session.analysisStatus as AnalysisStatus | undefined;
     if (status) {
       await chrome.storage.session.set({
-        analysisStatus: { videoId: status.videoId, phase: "failed", error: message.error } satisfies AnalysisStatus,
+        analysisStatus: { video_id: status.video_id, phase: "failed", error: message.error } satisfies AnalysisStatus,
       });
     }
     chrome.runtime.sendMessage({
@@ -74,7 +74,7 @@ chrome.runtime.onMessage.addListener((message: messageTypes | offscreenMessageTy
 
         if (cachedVideo?.video_score != null) {
           await chrome.storage.session.set({
-            analysisStatus: { videoId: obj.video.video_id, phase: "done" } satisfies AnalysisStatus,
+            analysisStatus: { video_id: obj.video.video_id, phase: "done" } satisfies AnalysisStatus,
           });
           chrome.runtime.sendMessage({
             type: "PRESENT_ANALYSIS",
@@ -85,7 +85,7 @@ chrome.runtime.onMessage.addListener((message: messageTypes | offscreenMessageTy
         }
 
         await chrome.storage.session.set({
-          analysisStatus: { videoId: obj.video.video_id, phase: "analyzing" } satisfies AnalysisStatus,
+          analysisStatus: { video_id: obj.video.video_id, phase: "analyzing" } satisfies AnalysisStatus,
         });
 
         await ensureOffscreenDocument();
@@ -101,7 +101,7 @@ chrome.runtime.onMessage.addListener((message: messageTypes | offscreenMessageTy
       } catch (error) {
         const errMsg = error instanceof Error ? error.message : "Analysis failed in the background worker.";
         await chrome.storage.session.set({
-          analysisStatus: { videoId: obj.video.video_id, phase: "failed", error: errMsg } satisfies AnalysisStatus,
+          analysisStatus: { video_id: obj.video.video_id, phase: "failed", error: errMsg } satisfies AnalysisStatus,
         });
         chrome.runtime.sendMessage({
           type: "RETURN_ANALYZE_FAILED",

@@ -16,6 +16,14 @@ export type Video = {
 export type modelResponse =
   Pick<Video, "video_score" | "score_reasoning">;
 
+export type Provider = "deepseek"
+
+export type Settings = {
+  provider: Provider;
+  model: string;
+  apiKey: string;
+}
+
 /**
  * Stored in chrome.storage.session to track analysis state across popup open/close.
  * Background writes it; popup reads it to restore UI on reopen.
