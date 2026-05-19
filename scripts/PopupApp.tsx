@@ -1,10 +1,22 @@
 import { useState, useEffect } from "react";
-import type { messageTypes, Video } from "./types";
+import type { messageTypes, Video, AnalysisStatus } from "./types";
 
 export function PopupApp() {
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState("Click the button to analyze the video!");
     const [result, setResult] = useState<{ score: number; reasoning: string } | null>(null);
+
+    async function fetchVideo(video_id) {
+        const storedVideo = await chrome.storage.local.get(video_id);
+        const video: Video = storedVideo[video_id];
+        if (video?.video_score != null) {
+            setResult({
+                score: video.video_score,
+                reasoning: video.score_reasoning
+            })
+        }
+        setLoading(false);
+    }
 
     useEffect(() => {
         const handler = (message: messageTypes) => {
@@ -13,18 +25,7 @@ export function PopupApp() {
                     setStatus(message.status);
                     return false;
                 case "PRESENT_ANALYSIS":
-                    setLoading(false);
-                    (async () => {
-                        const storedVideo = await chrome.storage.local.get(message.video_id);
-                        const video: Video = storedVideo[message.video_id];
-                        if (video?.video_score != null) {
-                            setResult({
-                                score: video.video_score,
-                                reasoning: video.score_reasoning
-                            })
-                        }
-                        setLoading(false);
-                    })();
+                    void fetchVideo(message.video_id);
                     return false;
                 case "RETURN_ANALYZE_FAILED":
                     setLoading(false);
@@ -43,6 +44,72 @@ export function PopupApp() {
         return () => chrome.runtime.onMessage.removeListener(handler); // <- removes the listener when the popup unmounts
     }, []); // <- dependency array
 
+    async function analysisRequest() {
+        setLoading(true);
+        setStatus("Collecting transcript and metadata from this tab...");
+
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab?.id || !tab.url?.includes("youtube.com/watch")) {
+            setLoading(false);
+            setStatus("Open a YouTube watch page first, then run Analyze.");
+            return;
+        }
+
+        try {
+            /**
+             * Sends to start analysis of the video on the page.
+             * This message is received by the contentScript.ts.
+             * See that file for what it does.
+             */
+            await chrome.tabs.sendMessage(tab.id, { type: "GRAB_VIDEO_INFO" });
+        } 
+        catch (_error) {
+            setLoading(false);
+            setStatus("Could not reach content script on this tab. Refresh the YouTube page and try again.");
+        }
+    }
+
+    async function handleAnalysisStatus(status: AnalysisStatus) {
+        switch (status.phase) {
+            case "analyzing":
+            setLoading(true);
+            setStatus("Analyzing the video...");
+            break;
+            case "done":
+            void fetchVideo(status.videoId);
+            break;
+            case "failed":
+            setLoading(false);
+            setStatus(status.error);
+            break;
+        }
+    }
+
+    useEffect(() => {
+        async function restore() {
+            const session = await chrome.storage.session.get("analysisStatus");
+            const status = session.analysisStatus as AnalysisStatus | undefined;
+            if (!status) return;
+        
+            handleAnalysisStatus(status);
+        }
+        void restore();
+        
+        const onChange = (
+            changes: Record<string, chrome.storage.StorageChange>, area: string) => {
+            if (area !== "session" || !("analysisStatus" in changes)) 
+                return;
+            const status = changes.analysisStatus.newValue as AnalysisStatus | undefined;
+            if (!status) 
+                return;
+            
+            handleAnalysisStatus(status);
+        };
+
+        chrome.storage.onChanged.addListener(onChange);
+        return () => chrome.storage.onChanged.removeListener(onChange);
+    }, []);
+
     return (
         <main className="w-55 p-4 flex flex-col gap-3">
         <div className="flex items-center gap-2">
@@ -52,7 +119,7 @@ export function PopupApp() {
         <p className="m-0 text-[13px] leading-[1.4]">{status}</p>
         <button
             disabled={loading}
-            onClick={() => {}}
+            onClick={() => { void analysisRequest(); }}
             type="button"
             className="self-start border-0 rounded-[10px] bg-linear-to-br from-[rgb(240,168,148)] to-[rgb(200,100,75)] text-white text-sm font-bold py-1 px-10 cursor-pointer whitespace-nowrap disabled:opacity-[0.65] disabled:cursor-not-allowed"
         >
