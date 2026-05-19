@@ -10,12 +10,17 @@
     "@langchain/core": "^1.1.27",
     "@mlc-ai/web-llm": "^0.2.81",
     "chrome-types": "^0.1.415",
-    "langchain": "^1.2.25"
+    "langchain": "^1.2.25",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.1.0-beta.32",
     "@tailwindcss/vite": "^4.2.0",
     "@types/node": "^25.5.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
     "tailwindcss": "^4.2.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",

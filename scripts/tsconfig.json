@@ -11,8 +11,9 @@
     "moduleResolution": "bundler",
     "types": ["chrome-types", "vite/client"],
     "resolveJsonModule": true,
-    "noEmit": true
+    "noEmit": true,
+    "jsx": "react-jsx"
   },
-  "include": ["*.ts", "debug-scripts/debug-transcript-backend.ts"],
+  "include": ["*.ts", "*.tsx", "debug-scripts/debug-transcript-backend.ts"],
   "exclude": ["node_modules"]
 }
