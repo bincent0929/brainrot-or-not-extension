@@ -4,37 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Brainrot Or Not</title>
-    <script type="module" src="/scripts/popup.ts"></script>
+    <script type="module" src="/scripts/popup.tsx"></script>
   </head>
   <body>
-    <main class="w-55 p-4 flex flex-col gap-3">
-      <div class="flex items-center gap-2">
-        <img src="assets/ext-icon.png" class="h-7 w-7"/>
-        <h1 class="m-0 text-lg font-bold"><span class="text-red-600">Brainrot</span> Or <span class="text-green-400">Not</span></h1>
-      </div>
-      <p id="status" class="m-0 text-[13px] leading-[1.4]">Click the button to analyze the video!</p>
-      <button
-        id="analyze-btn"
-        type="button"
-        class="self-start border-0 rounded-[10px] bg-linear-to-br from-[rgb(240,168,148)] to-[rgb(200,100,75)] text-white text-sm font-bold py-1 px-10 cursor-pointer whitespace-nowrap disabled:opacity-[0.65] disabled:cursor-not-allowed"
-      >Analyze Video</button>
-
-      <section id="result" class="rounded-[10px] border border-slate-300 bg-white p-3 flex flex-col gap-[10px] hidden" aria-live="polite">
-        <button
-          id="close-result-btn"
-          type="button"
-          class="self-end leading-none text-slate-400 hover:text-slate-700 bg-transparent border-0 cursor-pointer text-base p-0"
-          aria-label="Close result"
-        >✕</button>
-        <div class="flex items-center justify-between gap-[10px]">
-          <span class="text-xs text-slate-500 uppercase tracking-[0.03em]">Score</span>
-          <span id="score" class="text-2xl font-extrabold text-slate-900">-</span>
-        </div>
-        <div class="flex flex-col items-start gap-[10px]">
-          <span class="text-xs text-slate-500 uppercase tracking-[0.03em]">Summary</span>
-          <p id="summary" class="m-0 text-[13px] leading-[1.45] text-slate-800"></p>
-        </div>
-      </section>
-    </main>
-  </body>
+    <div id="root"></div>
 </html>
