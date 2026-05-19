@@ -3,7 +3,7 @@
  * May have a CORS issue, not really sure.
  */
 
-import type { Video } from "./types";
+import type { Video } from "../types";
 
 function grab_vId(): string {
   return new URLSearchParams(window.location.search).get("v") ?? "";

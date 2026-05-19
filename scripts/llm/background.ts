@@ -1,4 +1,4 @@
-import type { AnalysisStatus, messageTypes, offscreenMessageTypes, Video } from "./types";
+import type { AnalysisStatus, messageTypes, offscreenMessageTypes, Video } from "../types";
 
 const OFFSCREEN_URL = chrome.runtime.getURL("offscreen.html");
 

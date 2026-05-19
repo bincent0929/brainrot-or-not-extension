@@ -1,4 +1,4 @@
-import type { messageTypes, Video } from "./types";
+import type { messageTypes, Video } from "../types";
 
 import { fetch_video_text_data } from "./get-youtube-content";
 

@@ -21,9 +21,9 @@ export type modelResponse =
  * Background writes it; popup reads it to restore UI on reopen.
  */
 export type AnalysisStatus =
-  | { videoId: string; phase: "analyzing" }
-  | { videoId: string; phase: "done" }
-  | { videoId: string; phase: "failed"; error: string };
+  | { video_id: string; phase: "analyzing" }
+  | { video_id: string; phase: "done" }
+  | { video_id: string; phase: "failed"; error: string };
 
 /**
  * The types of the messages should be what should be done to the

@@ -4,7 +4,7 @@
  * and runs the webGPU script on it. Which allows it to get around the restrictive isolation of GPU
  * work on Windows computers.
  */
-import type { offscreenMessageTypes } from "./types";
+import type { offscreenMessageTypes } from "../types";
 
 import { processTranscript } from "./webgpu-transcript-processing";
 

@@ -14,6 +14,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["*.ts", "*.tsx", "debug-scripts/debug-transcript-backend.ts"],
+  "include": ["*.ts", "*.tsx", "debug-scripts/debug-transcript-backend.ts", "popup/popup.tsx", "popup/PopupApp.tsx", "llm/offscreen.ts", "llm/webgpu-transcript-processing.ts", "llm/background.ts", "transcript-capture/contentScript.ts", "transcript-capture/get-youtube-content.ts"],
   "exclude": ["node_modules"]
 }

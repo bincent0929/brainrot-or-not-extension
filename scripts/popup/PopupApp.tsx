@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { messageTypes, Video, AnalysisStatus } from "./types";
+import type { messageTypes, Video, AnalysisStatus } from "../types";
 
 export function PopupApp() {
     const [loading, setLoading] = useState(false);
@@ -76,7 +76,7 @@ export function PopupApp() {
                 setStatus("Analyzing the video...");
                 break;
             case "done":
-                void fetchVideo(status.videoId);
+                void fetchVideo(status.video_id);
                 break;
             case "failed":
                 setLoading(false);

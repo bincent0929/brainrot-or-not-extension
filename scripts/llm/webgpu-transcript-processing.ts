@@ -7,7 +7,7 @@ import { ChatWebLLM } from "@langchain/community/chat_models/webllm";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import type { InitProgressReport } from "@mlc-ai/web-llm";
 
-import type { Video, modelResponse } from "./types";
+import type { Video, modelResponse } from "../types";
 
 const maxTokens = 4096;
 const outputTokenBudget = 300;
