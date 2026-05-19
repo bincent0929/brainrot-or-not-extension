@@ -72,16 +72,16 @@ export function PopupApp() {
     async function handleAnalysisStatus(status: AnalysisStatus) {
         switch (status.phase) {
             case "analyzing":
-            setLoading(true);
-            setStatus("Analyzing the video...");
-            break;
+                setLoading(true);
+                setStatus("Analyzing the video...");
+                break;
             case "done":
-            void fetchVideo(status.videoId);
-            break;
+                void fetchVideo(status.videoId);
+                break;
             case "failed":
-            setLoading(false);
-            setStatus(status.error);
-            break;
+                setLoading(false);
+                setStatus(status.error);
+                break;
         }
     }
 
@@ -116,18 +116,29 @@ export function PopupApp() {
                 <img src="assets/ext-icon.png" className="h-7 w-7"/>
                 <h1 className="m-0 text-lg font-bold"><span className="text-red-600">Brainrot</span> Or <span className="text-green-400">Not</span></h1>
             </div>
-            <p className="m-0 text-[13px] leading-[1.4]">
-                {status}
-            </p>
-            <button
-                disabled={loading}
-                onClick={() => { void analysisRequest(); }}
-                type="button"
-                className="self-start border-0 rounded-[10px] bg-linear-to-br from-[rgb(240,168,148)] to-[rgb(200,100,75)] text-white text-sm font-bold py-1 px-10 cursor-pointer whitespace-nowrap disabled:opacity-[0.65] disabled:cursor-not-allowed"
-            >
-                {loading ? "Analyzing..." : "Analyze Video"}
-            </button>
-
+            {
+            /**
+             * Keeps the elements hidden is the result is presents
+             */
+            !result && (
+                <>
+                    <p className="m-0 text-[13px] leading-[1.4]">
+                        {status}
+                    </p>
+                    {!loading && (
+                        <button
+                            disabled={loading}
+                            onClick={() => { void analysisRequest(); }}
+                            type="button"
+                            className="self-start border-0 rounded-[10px] bg-linear-to-br from-[rgb(240,168,148)] to-[rgb(200,100,75)] text-white text-sm font-bold py-1 px-10 cursor-pointer whitespace-nowrap disabled:opacity-[0.65] disabled:cursor-not-allowed"
+                        >
+                            Analyze Video
+                        </button>
+                    )
+                    }
+                </>
+            )}
+            
             {
             /**
              * Checks whether result is null or not
@@ -137,7 +148,11 @@ export function PopupApp() {
             result && 
                 <section className="rounded-[10px] border border-slate-300 bg-white p-3 flex flex-col gap-[10px] " aria-live="polite">
                     <button
-                    onClick={() => setResult(null)}
+                    onClick={() => {
+                        setResult(null);
+                        setStatus("Click the button to analyze the video!");
+                        void chrome.storage.session.remove("analysisStatus");
+                    }}
                     type="button"
                     className="self-end leading-none text-slate-400 hover:text-slate-700 bg-transparent border-0 cursor-pointer text-base p-0"
                     aria-label="Close result"
