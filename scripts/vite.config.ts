@@ -7,16 +7,13 @@ import react from "@vitejs/plugin-react";
 
 import manifest from "../manifest.json";
 
-const rootDir = fileURLToPath(new URL("..", import.meta.url));
-
 export default defineConfig({
-  root: rootDir,
   publicDir: false,
   plugins: [react(), tailwindcss(), crx({ manifest })],
   build: {
     rollupOptions: {
       input: {
-        offscreen: fileURLToPath(new URL("../offscreen.html", import.meta.url)),
+        offscreen: fileURLToPath(new URL("offscreen.html", import.meta.url)),
       },
     },
     outDir: fileURLToPath(new URL("../dist", import.meta.url)),

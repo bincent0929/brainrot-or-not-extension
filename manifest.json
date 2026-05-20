@@ -5,13 +5,13 @@
   "permissions": ["tabs", "storage", "offscreen"],
   "host_permissions": ["https://*.youtube.com/*"],
   "background": {
-    "service_worker": "scripts/llm/background.ts",
+    "service_worker": "llm/background.ts",
     "type": "module"
   },
   "content_scripts": [
     {
       "matches": ["https://*.youtube.com/*"],
-      "js": ["scripts/transcript-capture/contentScript.ts"],
+      "js": ["transcript-capture/contentScript.ts"],
       "run_at": "document_idle"
     }
   ],
