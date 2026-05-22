@@ -52,7 +52,10 @@ Create `/etc/ytbackend.env` on the server (readable only by the service user):
 DATABASE_URL="file:/home/<user>/backend/prod.db"
 PORT=8080
 API_KEY=<long random string — generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))">
+EXTENSION_ID=<your Chrome extension ID — find it at chrome://extensions in developer mode>
 ```
+
+`API_KEY` is used by Express to authenticate requests. `EXTENSION_ID` is used by Caddy to restrict access to requests coming from the extension only. Neither value is ever exposed to clients.
 
 ### 3. systemd service
 
@@ -90,10 +93,27 @@ pnpm prisma migrate deploy
 
 ### 5. Caddy reverse proxy
 
-In `/etc/caddy/Caddyfile`:
+Caddy handles two things: restricting access to requests from the extension, and injecting the API key so Express can authenticate them. The extension never holds the key.
+
+Give Caddy access to the same environment file:
+```bash
+sudo systemctl edit caddy
 ```
-yourdomain.com {
-    reverse_proxy 127.0.0.1:8080
+Add:
+```ini
+[Service]
+EnvironmentFile=/etc/ytbackend.env
+```
+
+Then create `/etc/caddy/Caddyfile` using `production_example.caddyfile` as a template:
+```
+brainrotornot.varmail.org {
+    @notextension not header Origin chrome-extension://{$EXTENSION_ID}
+    respond @notextension 403
+
+    reverse_proxy 127.0.0.1:8080 {
+        header_up X-API-Key "{$API_KEY}"
+    }
 }
 ```
 
@@ -105,11 +125,11 @@ sudo systemctl reload caddy
 ### 6. Verify
 
 ```bash
-# Should return 403 (API key missing)
-curl https://yourdomain.com/api/videos
+# Should return 403 (Origin header missing or wrong)
+curl https://brainrotornot.varmail.org/api/videos
 
-# Should return []
-curl -H "X-API-Key: <your-key>" https://yourdomain.com/api/videos
+# Should return [] (correct Origin — Caddy injects the API key)
+curl -H "Origin: chrome-extension://<your-extension-id>" https://brainrotornot.varmail.org/api/videos
 ```
 
 ---

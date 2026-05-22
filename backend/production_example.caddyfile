@@ -1,0 +1,8 @@
+brainrotornot.varmail.org {
+    @notextension not header Origin chrome-extension://{$EXTENSION_ID}
+    respond @notextension 403
+
+    reverse_proxy 127.0.0.1:8080 {
+        header_up X-API-Key "{$API_KEY}"
+    }
+}
