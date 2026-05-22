@@ -12,7 +12,16 @@ export async function fetchVideoMetadata(
   return { title: data.title, channelName: data.author_name };
 }
 
+const cookieFetch: typeof globalThis.fetch = (url, options) =>
+  fetch(url, {
+    ...options,
+    headers: {
+      ...(options as RequestInit)?.headers,
+      Cookie: "SOCS=CAI",
+    },
+  });
+
 export async function fetchTranscript(videoId: string): Promise<string> {
-  const items = await YoutubeTranscript.fetchTranscript(videoId);
+  const items = await YoutubeTranscript.fetchTranscript(videoId, { fetch: cookieFetch });
   return items.map((item) => item.text.replace(/\n/g, " ")).join(" ");
 }
