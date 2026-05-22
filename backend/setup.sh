@@ -12,4 +12,4 @@ API_KEY=$(openssl rand -base64 32)
 sed -i "s|^API_KEY=.*|API_KEY=${API_KEY}|" .env
 
 echo "Generated .env with API_KEY."
-echo "Fill in EXTENSION_ID and DATA_DIR before running docker compose up."
+echo "Fill in EXTENSION_ID and DATA_DIR and DOMAIN before running docker compose up."
