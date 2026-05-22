@@ -1,5 +1,5 @@
 services:
-  app:
+  brainrot-or-not-backend:
     build: .
     env_file: .env
     environment:
@@ -23,4 +23,4 @@ services:
       - ${DATA_DIR:-./data}/caddy_config:/config
     restart: unless-stopped
     depends_on:
-      - app
+      - brainrot-or-not-backend

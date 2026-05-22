@@ -2,8 +2,8 @@
     @notextension not header Origin chrome-extension://{$EXTENSION_ID}
     respond @notextension 403
 
-    # {$PORT} matches PORT in .env — default 8000. "app" = Docker service name.
-    reverse_proxy app:{$PORT} {
+    # {$PORT} matches PORT in .env — default 8000.
+    reverse_proxy brainrot-or-not-backend:{$PORT} {
         header_up X-API-Key "{$API_KEY}"
     }
 }
