@@ -32,15 +32,16 @@ import { fetch_video_text_data } from "./get-youtube-content";
           });
           return false;
 
-        case video_data.video_score !== null:
+        case video_data.videoScore !== null:
           // if the video has already been scored
           const analysisFinished: messageTypes = {
             type: "PRESENT_ANALYSIS",
             status: "The analysis is finished.",
-            video_id: video_data.video_id
+            video_id: video_data.videoId
           };
           chrome.runtime.sendMessage(analysisFinished);
-          
+          break;
+
         default:
           const analyzeMessage: messageTypes = {
             type: "ANALYZE",
