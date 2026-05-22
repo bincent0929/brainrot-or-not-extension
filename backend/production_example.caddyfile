@@ -1,4 +1,4 @@
-brainrotornot.varmail.org {
+{$DOMAIN} {
     @notextension not header Origin chrome-extension://{$EXTENSION_ID}
     respond @notextension 403
 
