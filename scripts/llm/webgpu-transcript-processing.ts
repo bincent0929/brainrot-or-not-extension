@@ -76,8 +76,8 @@ function parseModelJson(content: string): modelResponse {
   }
 
   return {
-    video_score: score,
-    score_reasoning: String(parsed.score_reasoning ?? "")
+    videoScore: score,
+    scoreReasoning: String(parsed.score_reasoning ?? "")
   };
 }
 
@@ -86,7 +86,7 @@ async function transcriptTokenManagement(video: Video, loadedModel: ChatWebLLM):
 
   const restPayload = [
     `Video title: ${video.title}`,
-    `Channel: ${video.channel_name}`,
+    `Channel: ${video.channelName}`,
     `${prePrompt}`
   ].join("\n");
   
@@ -111,18 +111,18 @@ async function transcriptTokenManagement(video: Video, loadedModel: ChatWebLLM):
 export async function processTranscript(video: Video): Promise<Video> | undefined {
   try {
     Object.assign(video, {
-      prompt_used: prePrompt, 
-      model_used: "gemma-2-2b-it-q4f32_1-MLC", 
+      promptUsed: prePrompt,
+      modelUsed: "gemma-2-2b-it-q4f32_1-MLC",
       trained: false
     });
 
-    const loadedModel = await modelLoad(video.model_used);
+    const loadedModel = await modelLoad(video.modelUsed);
 
     const transcript = await transcriptTokenManagement(video, loadedModel);
 
     const promptPayload = [
       `Video title: ${video.title}`,
-      `Channel: ${video.channel_name}`,
+      `Channel: ${video.channelName}`,
       "Transcript:", transcript,
     ].join("\n");
 
@@ -157,12 +157,12 @@ export async function processTranscript(video: Video): Promise<Video> | undefine
     const modelResponse: modelResponse = parseModelJson(contentStr);
 
     Object.assign(video, {
-      video_score: modelResponse.video_score,
-      score_reasoning: modelResponse.score_reasoning,
-      scored_at: new Date().toISOString()
+      videoScore: modelResponse.videoScore,
+      scoreReasoning: modelResponse.scoreReasoning,
+      scoredAt: new Date().toISOString()
     });
 
-    if (video.video_score == null || video.score_reasoning == null || video.scored_at == null) {
+    if (video.videoScore == null || video.scoreReasoning == null || video.scoredAt == null) {
       throw new Error("Video scoring fields were not properly assigned.");
     }
 

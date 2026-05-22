@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Video {
+  id             Int       @id @default(autoincrement())
+  videoId        String    @unique @map("video_id")
+  title          String
+  channelName    String    @map("channel_name")
+  transcript     String
+  createdAt      DateTime  @default(now()) @map("created_at")
+  videoScore     Float?    @map("video_score")
+  scoreReasoning String?   @map("score_reasoning")
+  scoredAt       DateTime? @map("scored_at")
+  modelUsed      String?   @map("model_used")
+  trained        Boolean?
+  promptUsed     String?   @map("prompt_used")
+
+  @@map("videos")
+}

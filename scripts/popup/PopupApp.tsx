@@ -9,10 +9,10 @@ export function PopupApp() {
     async function fetchVideo(video_id: string) {
         const storedVideo = await chrome.storage.local.get(video_id);
         const video: Video = storedVideo[video_id];
-        if (video?.video_score != null) {
+        if (video?.videoScore != null) {
             setResult({
-                score: video.video_score,
-                reasoning: video.score_reasoning ?? ""
+                score: video.videoScore,
+                reasoning: video.scoreReasoning ?? ""
             })
         }
         setLoading(false);

@@ -1,20 +1,20 @@
 export type Video = {
   id: number;
-  video_id: string;
+  videoId: string;
   title: string;
-  channel_name: string;
+  channelName: string;
   transcript: string;
-  created_at: string; // ISO 8601 datetime string
-  video_score: number | null;
-  score_reasoning: string | null;
-  scored_at: string | null;
-  model_used: string | null;
+  createdAt: string; // ISO 8601 datetime string
+  videoScore: number | null;
+  scoreReasoning: string | null;
+  scoredAt: string | null;
+  modelUsed: string | null;
   trained: boolean | null;
-  prompt_used: string | null;
+  promptUsed: string | null;
 };
 
 export type modelResponse =
-  Pick<Video, "video_score" | "score_reasoning">;
+  Pick<Video, "videoScore" | "scoreReasoning">;
 
 /**
  * Stored in chrome.storage.session to track analysis state across popup open/close.

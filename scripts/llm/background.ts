@@ -28,14 +28,14 @@ chrome.runtime.onMessage.addListener((message: messageTypes | offscreenMessageTy
 
   (async () => {
     if (message.type === "OFFSCREEN_RESULT") {
-      await chrome.storage.local.set({ [message.video.video_id]: message.video });
+      await chrome.storage.local.set({ [message.video.videoId]: message.video });
       await chrome.storage.session.set({
-        analysisStatus: { video_id: message.video.video_id, phase: "done" } satisfies AnalysisStatus,
+        analysisStatus: { video_id: message.video.videoId, phase: "done" } satisfies AnalysisStatus,
       });
       chrome.runtime.sendMessage({
         type: "PRESENT_ANALYSIS",
         status: "The analysis is finished.",
-        video_id: message.video.video_id,
+        video_id: message.video.videoId,
       } satisfies messageTypes).catch(() => {});
       return;
     }
@@ -69,23 +69,23 @@ chrome.runtime.onMessage.addListener((message: messageTypes | offscreenMessageTy
           status: "Analyzing the video...",
         } satisfies messageTypes).catch(() => {});
 
-        const cachedResult = await chrome.storage.local.get(obj.video.video_id);
-        const cachedVideo = cachedResult[obj.video.video_id] as Video | undefined;
+        const cachedResult = await chrome.storage.local.get(obj.video.videoId);
+        const cachedVideo = cachedResult[obj.video.videoId] as Video | undefined;
 
-        if (cachedVideo?.video_score != null) {
+        if (cachedVideo?.videoScore != null) {
           await chrome.storage.session.set({
-            analysisStatus: { video_id: obj.video.video_id, phase: "done" } satisfies AnalysisStatus,
+            analysisStatus: { video_id: obj.video.videoId, phase: "done" } satisfies AnalysisStatus,
           });
           chrome.runtime.sendMessage({
             type: "PRESENT_ANALYSIS",
             status: "The analysis is finished.",
-            video_id: obj.video.video_id,
+            video_id: obj.video.videoId,
           } satisfies messageTypes).catch(() => {});
           return;
         }
 
         await chrome.storage.session.set({
-          analysisStatus: { video_id: obj.video.video_id, phase: "analyzing" } satisfies AnalysisStatus,
+          analysisStatus: { video_id: obj.video.videoId, phase: "analyzing" } satisfies AnalysisStatus,
         });
 
         await ensureOffscreenDocument();
@@ -101,7 +101,7 @@ chrome.runtime.onMessage.addListener((message: messageTypes | offscreenMessageTy
       } catch (error) {
         const errMsg = error instanceof Error ? error.message : "Analysis failed in the background worker.";
         await chrome.storage.session.set({
-          analysisStatus: { video_id: obj.video.video_id, phase: "failed", error: errMsg } satisfies AnalysisStatus,
+          analysisStatus: { video_id: obj.video.videoId, phase: "failed", error: errMsg } satisfies AnalysisStatus,
         });
         chrome.runtime.sendMessage({
           type: "RETURN_ANALYZE_FAILED",
