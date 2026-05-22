@@ -11,6 +11,7 @@ RUN pnpm install --frozen-lockfile
 
 COPY prisma ./prisma
 COPY prisma.config.ts ./
+ARG DATABASE_URL=file:./dummy.db
 RUN pnpm exec prisma generate
 
 COPY tsconfig.json ./
@@ -32,6 +33,7 @@ RUN pnpm install --frozen-lockfile
 
 COPY prisma ./prisma
 COPY prisma.config.ts ./
+ARG DATABASE_URL=file:./dummy.db
 RUN pnpm exec prisma generate
 
 COPY --from=builder /app/dist ./dist
