@@ -8,9 +8,6 @@ fi
 
 cp .env.example .env
 
-API_KEY=$(openssl rand -base64 32)
-sed -i "s|^API_KEY=.*|API_KEY=${API_KEY}|" .env
-
 # Read DATA_DIR from .env, fall back to ./data (matches docker-compose default)
 DATA_DIR=$(grep -E '^DATA_DIR=' .env | cut -d '=' -f2)
 DATA_DIR=${DATA_DIR:-./data}
@@ -22,5 +19,5 @@ if [ ! -f "${DATA_DIR}/Caddyfile" ]; then
   echo "Copied Caddyfile to ${DATA_DIR}/Caddyfile."
 fi
 
-echo "Generated .env with API_KEY."
+echo "Generated .env."
 echo "Fill in EXTENSION_ID and DOMAIN before running docker compose up."
