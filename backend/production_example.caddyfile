@@ -3,7 +3,5 @@
     respond @notextension 403
 
     # {$PORT} matches PORT in .env — default 8080.
-    reverse_proxy brainrot-or-not-backend:{$PORT} {
-        header_up X-API-Key "{$API_KEY}"
-    }
+    reverse_proxy brainrot-or-not-backend:{$PORT}
 }

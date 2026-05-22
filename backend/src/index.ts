@@ -1,26 +1,14 @@
 import "dotenv/config";
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import prisma from "./prisma";
 import { fetchVideoMetadata, fetchTranscript } from "./services";
 
 const app = express();
-const PORT = process.env.PORT ?? 8000;
-const API_KEY = process.env.API_KEY;
+const PORT = process.env.PORT ?? 8080;
 
 app.use(express.json());
 app.use(cors({ origin: ["https://www.youtube.com"] }));
-
-// Reject requests missing the correct X-API-Key header.
-// Skipped if API_KEY is not set (useful during local dev).
-app.use((req: Request, res: Response, next: NextFunction) => {
-  if (!API_KEY) return next();
-  if (req.headers["x-api-key"] !== API_KEY) {
-    res.status(403).json({ error: "Forbidden" });
-    return;
-  }
-  next();
-});
 
 // POST /api/transcripts
 // Body: { video_id: string }

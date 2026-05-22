@@ -13,7 +13,7 @@ export async function fetch_video_text_data(): Promise<Video | undefined> {
   const video_id = grab_vId();
 
   try {
-    const res = await fetch("http://localhost:8080/api/transcripts/", {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/transcripts/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ video_id: video_id })
