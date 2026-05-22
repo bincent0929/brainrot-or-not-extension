@@ -31,7 +31,7 @@ async function modelLoad(model_name: string): Promise<ChatWebLLM> {
       const model = new ChatWebLLM({
         model: model_name,
         chatOptions: {
-          temperature: 0.1,
+          temperature: 0.5,
           context_window_size: maxTokens,
         },
       });
@@ -54,10 +54,10 @@ const prePrompt =
   "educational/tutorial/informational/news → 3.5-5.0. " +
   "entertainment/gaming/reaction/drama → 0.0-2.0. " +
   "mixed → 2.0-3.5. " +
-  "score_reasoning format: '<category>, <high|low> <signal>'. Max 12 words. " +
+  "score_reasoning format: '<explanation>'. Max 12 words. Be humorous. YOU MUST USE brainrot, brain nourishment, slop, skibidi, rot, rizz, gyatt, sus, bussin, low-key, high-key as at least one word in the response." +
   'Reply ONLY as JSON: {"video_score": <float>, "category": "<one>", "score_reasoning": "<string>"}. ' +
-  'Example: {"video_score": 4.2, "category": "tutorial", "score_reasoning": "tutorial, high information density"}. ' +
-  'Example: {"video_score": 1.0, "category": "reaction", "score_reasoning": "reaction, low informational value"}. ' +
+  'Example: {"video_score": 4.2, "category": "tutorial", "score_reasoning": "tutorial, this is high-key bussin and brain nourishing!"}. ' +
+  'Example: {"video_score": 1.0, "category": "reaction", "score_reasoning": "reaction, this is low-key sus and pretty brainrot!"}. ' +
   "Context: brain rot refers to material of low or addictive quality, typically in online media, that preoccupies someone to the point it is said to affect mental functioning. Both the state of preoccupation and resulting mental degradation are known as brain rot.";
 
 function parseModelJson(content: string): modelResponse {
