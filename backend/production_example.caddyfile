@@ -2,7 +2,8 @@ brainrotornot.varmail.org {
     @notextension not header Origin chrome-extension://{$EXTENSION_ID}
     respond @notextension 403
 
-    reverse_proxy 127.0.0.1:8080 {
+    # {$PORT} matches PORT in .env — default 8000. "app" = Docker service name.
+    reverse_proxy app:{$PORT} {
         header_up X-API-Key "{$API_KEY}"
     }
 }

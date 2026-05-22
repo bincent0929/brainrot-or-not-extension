@@ -1,0 +1,26 @@
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      # Overrides DATABASE_URL from .env — DB lives on host via volume mount
+      DATABASE_URL: file:/data/prod.db
+    volumes:
+      - ${DATA_DIR:-./data}/db:/data
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    env_file: .env
+    volumes:
+      # Caddyfile and TLS data live on host — edit without rebuilding
+      - ${DATA_DIR:-./data}/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ${DATA_DIR:-./data}/caddy_data:/data
+      - ${DATA_DIR:-./data}/caddy_config:/config
+    restart: unless-stopped
+    depends_on:
+      - app
